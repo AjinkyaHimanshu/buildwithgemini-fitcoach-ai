@@ -1,0 +1,50 @@
+{
+  "plank": {
+    "exercise_id": "plank",
+    "name": "Plank",
+    "target_muscle": "Core & Abdominals",
+    "gif_url_male": "https://storage.googleapis.com/fitcoach-ai-media-3812/visual_guides/plank_male.gif",
+    "gif_url_female": "https://storage.googleapis.com/fitcoach-ai-media-3812/visual_guides/plank_female.gif",
+    "gif_url": "https://storage.googleapis.com/fitcoach-ai-media-3812/visual_guides/plank_male.gif"
+  },
+  "chest_supported_dumbbell_row": {
+    "exercise_id": "chest_supported_dumbbell_row",
+    "name": "Chest-Supported Dumbbell Row",
+    "target_muscle": "Lats & Upper Back",
+    "gif_url_male": "https://storage.googleapis.com/fitcoach-ai-media-3812/visual_guides/chest_supported_dumbbell_row_male.gif",
+    "gif_url_female": "https://storage.googleapis.com/fitcoach-ai-media-3812/visual_guides/chest_supported_dumbbell_row_female.gif",
+    "gif_url": "https://storage.googleapis.com/fitcoach-ai-media-3812/visual_guides/chest_supported_dumbbell_row_male.gif"
+  },
+  "dumbbell_romanian_deadlift": {
+    "exercise_id": "dumbbell_romanian_deadlift",
+    "name": "Dumbbell Romanian Deadlift",
+    "target_muscle": "Hamstrings & Glutes",
+    "gif_url_male": "https://storage.googleapis.com/fitcoach-ai-media-3812/visual_guides/dumbbell_romanian_deadlift_male.gif",
+    "gif_url_female": "https://storage.googleapis.com/fitcoach-ai-media-3812/visual_guides/dumbbell_romanian_deadlift_female.gif",
+    "gif_url": "https://storage.googleapis.com/fitcoach-ai-media-3812/visual_guides/dumbbell_romanian_deadlift_male.gif"
+  },
+  "neutral_grip_incline_dumbbell_press": {
+    "exercise_id": "neutral_grip_incline_dumbbell_press",
+    "name": "Neutral-Grip Incline Dumbbell Press",
+    "target_muscle": "Upper Chest & Triceps",
+    "gif_url_male": "https://storage.googleapis.com/fitcoach-ai-media-3812/visual_guides/neutral_grip_incline_dumbbell_press_male.gif",
+    "gif_url_female": "https://storage.googleapis.com/fitcoach-ai-media-3812/visual_guides/neutral_grip_incline_dumbbell_press_female.gif",
+    "gif_url": "https://storage.googleapis.com/fitcoach-ai-media-3812/visual_guides/neutral_grip_incline_dumbbell_press_male.gif"
+  },
+  "goblet_box_squat": {
+    "exercise_id": "goblet_box_squat",
+    "name": "Goblet Box Squat",
+    "target_muscle": "Quadriceps & Glutes",
+    "gif_url_male": "https://storage.googleapis.com/fitcoach-ai-media-3812/visual_guides/goblet_box_squat_male.gif",
+    "gif_url_female": "https://storage.googleapis.com/fitcoach-ai-media-3812/visual_guides/goblet_box_squat_female.gif",
+    "gif_url": "https://storage.googleapis.com/fitcoach-ai-media-3812/visual_guides/goblet_box_squat_male.gif"
+  },
+  "cable_face_pull": {
+    "exercise_id": "cable_face_pull",
+    "name": "Cable Face Pull",
+    "target_muscle": "Rear Delts & Rotator Cuff",
+    "gif_url_male": "https://storage.googleapis.com/fitcoach-ai-media-3812/visual_guides/cable_face_pull_male.gif",
+    "gif_url_female": "https://storage.googleapis.com/fitcoach-ai-media-3812/visual_guides/cable_face_pull_female.gif",
+    "gif_url": "https://storage.googleapis.com/fitcoach-ai-media-3812/visual_guides/cable_face_pull_male.gif"
+  }
+}
