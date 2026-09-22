@@ -235,7 +235,7 @@ def generate_exercise_visual_guide(exercise_name: str, target_muscle: str = "", 
     gender_badge = "🏃‍♀️ Female Athlete Form" if gender_clean == "female" else "🏃‍♂️ Male Athlete Form"
     return (
         f"🎬 Animated Exercise GIF for '{exercise_name}'{muscle_info} [{gender_badge}] [{source}]:\n"
-        f"• Animated GIF URL: {gif_url}\n"
+        f"![{exercise_name}]({gif_url})\n"
         f"• Execution Cues: Phase 1 (Posture & Alignment) ➔ Phase 2 (Peak Squeeze & Controlled Return)."
     )
 
@@ -723,6 +723,7 @@ async def generate_domain_item_image(item_name: str, tool_context: ToolContext) 
         public_url = f"https://storage.googleapis.com/{GCS_MEDIA_BUCKET}/{object_name}"
         return (
             f"🖼️ Generated image for '{item_name}'!\n"
+            f"![{item_name}]({public_url})\n"
             f"• Public GCS Image URL: {public_url}\n"
             f"• Saved to Playground Artifacts as: {filename}"
         )
@@ -789,6 +790,7 @@ async def generate_domain_item_video(item_name: str, tool_context: ToolContext) 
         public_url = f"https://storage.googleapis.com/{GCS_MEDIA_BUCKET}/{object_name}"
         return (
             f"🎥 Generated short video for '{item_name}'!\n"
+            f"![{item_name}]({public_url})\n"
             f"• Public GCS Video URL: {public_url}\n"
             f"• Saved to Playground Artifacts as: {filename}"
         )

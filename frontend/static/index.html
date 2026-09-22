@@ -45,6 +45,7 @@
   .a2text.a2-h4 { font-size:1rem; font-weight:600; }
   .a2text.a2-caption { font-size:.85rem; color:#666; }
   .a2divider { border:none; border-top:1px solid var(--border); margin:.4rem 0; width:100%; }
+  .a2img { max-width:100%; border-radius:12px; margin:.5rem 0; display:block; box-shadow:0 4px 12px rgba(0,0,0,0.1); }
   /* Prompt Chips */
   .suggestions-row { display:flex; gap:.5rem; padding:.7rem 1.2rem .4rem; background:#ffffff; justify-content:flex-start; overflow-x:auto; border-top:1px solid #f1f5f9; }
   .chip { padding:.45rem .9rem; font-size:.84rem; border:1px solid var(--border); border-radius:20px; background:#f8fafc; color:#334155; cursor:pointer; font-weight:500; transition:all 0.15s ease-in-out; white-space:nowrap; }
@@ -192,11 +193,40 @@ function flattenText(messages) {
 
 function formatMarkdown(text) {
   if (!text) return "";
-  let safe = text
+  
+  const mediaPlaceholders = [];
+
+  // 1. Extract markdown images ![alt](url) before entity escaping
+  let processed = text.replace(/!\[([^\]]*)\]\((https?:\/\/[^\s\)]+)\)/gi, (match, alt, url) => {
+    const isVideo = /\.(mp4|webm)(\?.*)?$/i.test(url);
+    const id = `__MEDIA_PLACEHOLDER_${mediaPlaceholders.length}__`;
+    if (isVideo) {
+      mediaPlaceholders.push(`<video src="${url}" controls style="max-width:100%; border-radius:12px; margin:0.6rem 0; display:block; box-shadow:0 4px 12px rgba(0,0,0,0.1);"></video>`);
+    } else {
+      mediaPlaceholders.push(`<img src="${url}" alt="${alt || 'Generated Image'}" style="max-width:100%; border-radius:12px; margin:0.6rem 0; display:block; box-shadow:0 4px 12px rgba(0,0,0,0.1);">`);
+    }
+    return id;
+  });
+
+  // 2. Extract standalone GCS image/video URLs that aren't already formatted
+  processed = processed.replace(/(?<!\()https?:\/\/[^\s<>]+\.(png|jpg|jpeg|gif|webp|mp4|webm)(\?[^\s<>]*)?/gi, (url) => {
+    const isVideo = /\.(mp4|webm)(\?.*)?$/i.test(url);
+    const id = `__MEDIA_PLACEHOLDER_${mediaPlaceholders.length}__`;
+    if (isVideo) {
+      mediaPlaceholders.push(`<video src="${url}" controls style="max-width:100%; border-radius:12px; margin:0.6rem 0; display:block; box-shadow:0 4px 12px rgba(0,0,0,0.1);"></video>`);
+    } else {
+      mediaPlaceholders.push(`<img src="${url}" alt="Generated Image" style="max-width:100%; border-radius:12px; margin:0.6rem 0; display:block; box-shadow:0 4px 12px rgba(0,0,0,0.1);">`);
+    }
+    return id;
+  });
+
+  // 3. Escape HTML entities for safety
+  let safe = processed
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;");
-  
+
+  // 4. Formatting rules
   safe = safe.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
   safe = safe.replace(/__(.*?)__/g, '<strong>$1</strong>');
   safe = safe.replace(/\*(.*?)\*/g, '<em>$1</em>');
@@ -205,8 +235,15 @@ function formatMarkdown(text) {
   safe = safe.replace(/^# (.*$)/gim, '<h1 style="margin:.6rem 0;font-size:1.35rem">$1</h1>');
   safe = safe.replace(/^\s*\d+\.\s+(.*$)/gim, '<li style="margin-left:1.2rem;list-style-type:decimal;">$1</li>');
   safe = safe.replace(/^\s*[-*]\s+(.*$)/gim, '<li style="margin-left:1.2rem;list-style-type:disc;">$1</li>');
+  safe = safe.replace(/\[([^\]]+)\]\((https?:\/\/[^\s\)]+)\)/gi, '<a href="$2" target="_blank" style="color:var(--accent); font-weight:500; text-decoration:underline;">$1</a>');
   safe = safe.replace(/\n\n/g, '<div style="margin-bottom:.5rem;"></div>');
   safe = safe.replace(/\n/g, '<br>');
+
+  // 5. Restore rendered HTML media elements
+  mediaPlaceholders.forEach((mediaHtml, idx) => {
+    safe = safe.replace(`__MEDIA_PLACEHOLDER_${idx}__`, mediaHtml);
+  });
+
   return safe;
 }
 
