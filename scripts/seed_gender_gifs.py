@@ -6,8 +6,10 @@ from pathlib import Path
 from PIL import Image, ImageDraw
 from google.cloud import firestore, storage
 
-BUCKET_NAME = "fitcoach-ai-media-3812"
-PROJECT_ID = "qwiklabs-gcp-03-a5949decd8e8"
+import os
+
+PROJECT_ID = os.getenv("GOOGLE_CLOUD_PROJECT", "qwiklabs-gcp-02-f169ce6219d4")
+BUCKET_NAME = f"fitcoach-ai-media-{PROJECT_ID}"
 LOCAL_CACHE_FILE = Path("data/firestore_cache.json")
 
 EXERCISES = [
@@ -17,6 +19,16 @@ EXERCISES = [
     ("Neutral-Grip Incline Dumbbell Press", "Upper Chest & Triceps"),
     ("Goblet Box Squat", "Quadriceps & Glutes"),
     ("Cable Face Pull", "Rear Delts & Rotator Cuff"),
+    ("Burpees", "Full Body & Conditioning"),
+    ("Burpee", "Full Body & Conditioning"),
+    ("Squat", "Quadriceps & Glutes"),
+    ("Squats", "Quadriceps & Glutes"),
+    ("Deadlift", "Hamstrings & Back"),
+    ("Deadlifts", "Hamstrings & Back"),
+    ("Push-up", "Chest & Triceps"),
+    ("Push-ups", "Chest & Triceps"),
+    ("Curls", "Biceps & Forearms"),
+    ("Curl", "Biceps & Forearms"),
 ]
 
 
@@ -91,13 +103,13 @@ def seed_gender_gifs():
         male_gif_bytes = create_gender_exercise_gif(ex_name, target, "male")
         male_blob = bucket.blob(f"visual_guides/{slug}_male.gif")
         male_blob.upload_from_string(male_gif_bytes, content_type="image/gif")
-        male_url = f"https://storage.googleapis.com/fitcoach-ai-media-3812/visual_guides/{slug}_male.gif"
+        male_url = f"https://storage.googleapis.com/{BUCKET_NAME}/visual_guides/{slug}_male.gif"
 
         # Generate Female GIF
         female_gif_bytes = create_gender_exercise_gif(ex_name, target, "female")
         female_blob = bucket.blob(f"visual_guides/{slug}_female.gif")
         female_blob.upload_from_string(female_gif_bytes, content_type="image/gif")
-        female_url = f"https://storage.googleapis.com/fitcoach-ai-media-3812/visual_guides/{slug}_female.gif"
+        female_url = f"https://storage.googleapis.com/{BUCKET_NAME}/visual_guides/{slug}_female.gif"
 
         doc_data = {
             "exercise_id": slug,

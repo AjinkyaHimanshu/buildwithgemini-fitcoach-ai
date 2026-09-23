@@ -61,7 +61,7 @@ if USE_LOCAL_AGENT:
 else:
     RESOURCE = os.environ.get(
         "AGENT_ENGINE_RESOURCE_NAME",
-        "projects/477671931395/locations/us-east1/reasoningEngines/1654556092593602560",
+        "projects/916472058254/locations/us-central1/reasoningEngines/4401436855208247296",
     )
     AGENT_DIRECTORY = os.environ.get("AGENT_DIRECTORY", "app")
     LOCATION = RESOURCE.split("/locations/")[1].split("/")[0]
@@ -253,7 +253,28 @@ async def chat(req: Request):
     return JSONResponse({"parts": parts})
 
 
+@app.post("/new_session")
+async def new_session(req: Request):
+    try:
+        body = await req.json()
+    except Exception:
+        body = {}
+    user_id = body.get("user_id") or "web-user"
+    _contexts.pop(user_id, None)
+    return JSONResponse({"status": "cleared", "user_id": user_id})
+
+
+from fastapi.responses import FileResponse, JSONResponse
+
+
 STATIC_DIR = os.path.join(os.path.dirname(__file__), "static")
+
+
+@app.get("/")
+async def read_root():
+    return FileResponse(os.path.join(STATIC_DIR, "index.html"))
+
+
 app.mount("/", StaticFiles(directory=STATIC_DIR, html=True), name="static")
 
 

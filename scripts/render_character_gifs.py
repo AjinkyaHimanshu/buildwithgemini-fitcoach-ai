@@ -6,8 +6,10 @@ from pathlib import Path
 from PIL import Image, ImageDraw
 from google.cloud import firestore, storage
 
-BUCKET_NAME = "fitcoach-ai-media-qwiklabs-gcp-03-a5949decd8e8"
-PROJECT_ID = "qwiklabs-gcp-03-a5949decd8e8"
+import os
+
+PROJECT_ID = os.getenv("GOOGLE_CLOUD_PROJECT", "qwiklabs-gcp-02-f169ce6219d4")
+BUCKET_NAME = f"fitcoach-ai-media-{PROJECT_ID}"
 LOCAL_CACHE_FILE = Path("data/firestore_cache.json")
 
 EXERCISES = [

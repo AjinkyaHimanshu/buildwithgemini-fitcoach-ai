@@ -5,9 +5,11 @@ import vertexai
 from vertexai.preview import rag
 from vertexai.preview.rag.utils import resources as rr
 
-PROJECT_ID = "qwiklabs-gcp-03-a5949decd8e8"
+import os
+
+PROJECT_ID = os.getenv("GOOGLE_CLOUD_PROJECT", "qwiklabs-gcp-02-f169ce6219d4")
 LOCATION = "us-central1"
-GCS_PATH = "gs://fitcoach-ai-media-3812/rag/pg49513.txt"
+GCS_PATH = f"gs://fitcoach-ai-media-{PROJECT_ID}/rag/pg49513.txt"
 
 PARSING_PROMPT = (
     "Extract the individual useful facts, medicinal herbs, recipes, and health remedies described in this text. "

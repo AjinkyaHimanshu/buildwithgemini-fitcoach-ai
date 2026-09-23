@@ -4,8 +4,10 @@ from io import BytesIO
 from PIL import Image, ImageDraw
 from google.cloud import storage
 
-BUCKET_NAME = "fitcoach-ai-media-3812"
-PROJECT_ID = "qwiklabs-gcp-03-a5949decd8e8"
+import os
+
+PROJECT_ID = os.getenv("GOOGLE_CLOUD_PROJECT", "qwiklabs-gcp-02-f169ce6219d4")
+BUCKET_NAME = f"fitcoach-ai-media-{PROJECT_ID}"
 
 EXERCISES_TO_SEED = [
     ("Plank", "Core & Abdominals"),
@@ -65,7 +67,7 @@ def seed_visual_guides():
 
         blob = bucket.blob(object_key)
         blob.upload_from_string(png_bytes, content_type="image/png")
-        url = f"https://storage.googleapis.com/fitcoach-ai-media-3812/{object_key}"
+        url = f"https://storage.googleapis.com/{BUCKET_NAME}/{object_key}"
         print(f"  [+] Uploaded visual guide for '{ex_name}' -> {url}")
 
     print("✅ All exercise visual guides uploaded successfully!")

@@ -1,6 +1,6 @@
 """Seed script to populate Firestore 'exercises' collection for FitCoach AI.
 
-HARDCODED PROJECT ID: 'qwiklabs-gcp-03-a5949decd8e8'
+HARDCODED PROJECT ID: 'qwiklabs-gcp-02-f169ce6219d4'
 (Avoids Agent Platform project number resolution failures).
 """
 
@@ -8,7 +8,7 @@ import json
 from pathlib import Path
 from google.cloud import firestore
 
-PROJECT_ID = "qwiklabs-gcp-03-a5949decd8e8"
+PROJECT_ID = "qwiklabs-gcp-02-f169ce6219d4"
 LOCAL_DB_FILE = Path("data/exercises_db.json")
 
 SEED_EXERCISES = [
@@ -19,8 +19,8 @@ SEED_EXERCISES = [
         "difficulty": "Beginner",
         "equipment": "Bodyweight",
         "description": "Static isometric core hold. Maintain neutral spine, pack shoulders, and brace abdominals tight.",
-        "gif_url_male": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-03-a5949decd8e8/visual_guides/plank_male.gif",
-        "gif_url_female": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-03-a5949decd8e8/visual_guides/plank_female.gif",
+        "gif_url_male": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-02-f169ce6219d4/visual_guides/plank_male.gif",
+        "gif_url_female": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-02-f169ce6219d4/visual_guides/plank_female.gif",
     },
     {
         "exercise_id": "chest_supported_dumbbell_row",
@@ -29,8 +29,8 @@ SEED_EXERCISES = [
         "difficulty": "Intermediate",
         "equipment": "Dumbbell & Incline Bench",
         "description": "Lower-back friendly pulling movement. Lie chest-down on a 45-degree bench and row dumbbells toward hips.",
-        "gif_url_male": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-03-a5949decd8e8/visual_guides/chest_supported_dumbbell_row_male.gif",
-        "gif_url_female": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-03-a5949decd8e8/visual_guides/chest_supported_dumbbell_row_female.gif",
+        "gif_url_male": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-02-f169ce6219d4/visual_guides/chest_supported_dumbbell_row_male.gif",
+        "gif_url_female": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-02-f169ce6219d4/visual_guides/chest_supported_dumbbell_row_female.gif",
     },
     {
         "exercise_id": "dumbbell_romanian_deadlift",
@@ -39,8 +39,8 @@ SEED_EXERCISES = [
         "difficulty": "Intermediate",
         "equipment": "Dumbbells",
         "description": "Hip-hinge pattern targeting posterior chain. Hinge at hips while maintaining slight knee bend and flat back.",
-        "gif_url_male": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-03-a5949decd8e8/visual_guides/dumbbell_romanian_deadlift_male.gif",
-        "gif_url_female": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-03-a5949decd8e8/visual_guides/dumbbell_romanian_deadlift_female.gif",
+        "gif_url_male": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-02-f169ce6219d4/visual_guides/dumbbell_romanian_deadlift_male.gif",
+        "gif_url_female": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-02-f169ce6219d4/visual_guides/dumbbell_romanian_deadlift_female.gif",
     },
     {
         "exercise_id": "neutral_grip_incline_dumbbell_press",
@@ -49,8 +49,8 @@ SEED_EXERCISES = [
         "difficulty": "Intermediate",
         "equipment": "Dumbbells & Incline Bench",
         "description": "Upper body pressing variation with palms facing each other to reduce shoulder joint stress.",
-        "gif_url_male": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-03-a5949decd8e8/visual_guides/neutral_grip_incline_dumbbell_press_male.gif",
-        "gif_url_female": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-03-a5949decd8e8/visual_guides/neutral_grip_incline_dumbbell_press_female.gif",
+        "gif_url_male": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-02-f169ce6219d4/visual_guides/neutral_grip_incline_dumbbell_press_male.gif",
+        "gif_url_female": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-02-f169ce6219d4/visual_guides/neutral_grip_incline_dumbbell_press_female.gif",
     },
     {
         "exercise_id": "goblet_box_squat",
@@ -59,8 +59,8 @@ SEED_EXERCISES = [
         "difficulty": "Beginner",
         "equipment": "Dumbbell or Kettlebell",
         "description": "Squat variation holding weight at chest level and squatting to a box target for depth consistency.",
-        "gif_url_male": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-03-a5949decd8e8/visual_guides/goblet_box_squat_male.gif",
-        "gif_url_female": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-03-a5949decd8e8/visual_guides/goblet_box_squat_female.gif",
+        "gif_url_male": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-02-f169ce6219d4/visual_guides/goblet_box_squat_male.gif",
+        "gif_url_female": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-02-f169ce6219d4/visual_guides/goblet_box_squat_female.gif",
     },
     {
         "exercise_id": "cable_face_pull",
@@ -69,8 +69,8 @@ SEED_EXERCISES = [
         "difficulty": "Beginner",
         "equipment": "Cable Machine & Rope Attachment",
         "description": "Shoulder health and posterior delt exercise. Pull rope toward forehead with high elbows and external rotation.",
-        "gif_url_male": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-03-a5949decd8e8/visual_guides/cable_face_pull_male.gif",
-        "gif_url_female": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-03-a5949decd8e8/visual_guides/cable_face_pull_female.gif",
+        "gif_url_male": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-02-f169ce6219d4/visual_guides/cable_face_pull_male.gif",
+        "gif_url_female": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-02-f169ce6219d4/visual_guides/cable_face_pull_female.gif",
     },
 ]
 

@@ -3,48 +3,128 @@
     "exercise_id": "plank",
     "name": "Plank",
     "target_muscle": "Core & Abdominals",
-    "gif_url_male": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-03-a5949decd8e8/visual_guides/plank_male.gif",
-    "gif_url_female": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-03-a5949decd8e8/visual_guides/plank_female.gif",
-    "gif_url": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-03-a5949decd8e8/visual_guides/plank_male.gif"
+    "gif_url_male": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-02-f169ce6219d4/visual_guides/plank_male.gif",
+    "gif_url_female": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-02-f169ce6219d4/visual_guides/plank_female.gif",
+    "gif_url": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-02-f169ce6219d4/visual_guides/plank_male.gif"
   },
   "chest_supported_dumbbell_row": {
     "exercise_id": "chest_supported_dumbbell_row",
     "name": "Chest-Supported Dumbbell Row",
     "target_muscle": "Lats & Upper Back",
-    "gif_url_male": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-03-a5949decd8e8/visual_guides/chest_supported_dumbbell_row_male.gif",
-    "gif_url_female": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-03-a5949decd8e8/visual_guides/chest_supported_dumbbell_row_female.gif",
-    "gif_url": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-03-a5949decd8e8/visual_guides/chest_supported_dumbbell_row_male.gif"
+    "gif_url_male": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-02-f169ce6219d4/visual_guides/chest_supported_dumbbell_row_male.gif",
+    "gif_url_female": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-02-f169ce6219d4/visual_guides/chest_supported_dumbbell_row_female.gif",
+    "gif_url": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-02-f169ce6219d4/visual_guides/chest_supported_dumbbell_row_male.gif"
   },
   "dumbbell_romanian_deadlift": {
     "exercise_id": "dumbbell_romanian_deadlift",
     "name": "Dumbbell Romanian Deadlift",
     "target_muscle": "Hamstrings & Glutes",
-    "gif_url_male": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-03-a5949decd8e8/visual_guides/dumbbell_romanian_deadlift_male.gif",
-    "gif_url_female": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-03-a5949decd8e8/visual_guides/dumbbell_romanian_deadlift_female.gif",
-    "gif_url": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-03-a5949decd8e8/visual_guides/dumbbell_romanian_deadlift_male.gif"
+    "gif_url_male": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-02-f169ce6219d4/visual_guides/dumbbell_romanian_deadlift_male.gif",
+    "gif_url_female": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-02-f169ce6219d4/visual_guides/dumbbell_romanian_deadlift_female.gif",
+    "gif_url": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-02-f169ce6219d4/visual_guides/dumbbell_romanian_deadlift_male.gif"
   },
   "neutral_grip_incline_dumbbell_press": {
     "exercise_id": "neutral_grip_incline_dumbbell_press",
     "name": "Neutral-Grip Incline Dumbbell Press",
     "target_muscle": "Upper Chest & Triceps",
-    "gif_url_male": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-03-a5949decd8e8/visual_guides/neutral_grip_incline_dumbbell_press_male.gif",
-    "gif_url_female": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-03-a5949decd8e8/visual_guides/neutral_grip_incline_dumbbell_press_female.gif",
-    "gif_url": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-03-a5949decd8e8/visual_guides/neutral_grip_incline_dumbbell_press_male.gif"
+    "gif_url_male": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-02-f169ce6219d4/visual_guides/neutral_grip_incline_dumbbell_press_male.gif",
+    "gif_url_female": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-02-f169ce6219d4/visual_guides/neutral_grip_incline_dumbbell_press_female.gif",
+    "gif_url": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-02-f169ce6219d4/visual_guides/neutral_grip_incline_dumbbell_press_male.gif"
   },
   "goblet_box_squat": {
     "exercise_id": "goblet_box_squat",
     "name": "Goblet Box Squat",
     "target_muscle": "Quadriceps & Glutes",
-    "gif_url_male": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-03-a5949decd8e8/visual_guides/goblet_box_squat_male.gif",
-    "gif_url_female": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-03-a5949decd8e8/visual_guides/goblet_box_squat_female.gif",
-    "gif_url": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-03-a5949decd8e8/visual_guides/goblet_box_squat_male.gif"
+    "gif_url_male": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-02-f169ce6219d4/visual_guides/goblet_box_squat_male.gif",
+    "gif_url_female": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-02-f169ce6219d4/visual_guides/goblet_box_squat_female.gif",
+    "gif_url": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-02-f169ce6219d4/visual_guides/goblet_box_squat_male.gif"
   },
   "cable_face_pull": {
     "exercise_id": "cable_face_pull",
     "name": "Cable Face Pull",
     "target_muscle": "Rear Delts & Rotator Cuff",
-    "gif_url_male": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-03-a5949decd8e8/visual_guides/cable_face_pull_male.gif",
-    "gif_url_female": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-03-a5949decd8e8/visual_guides/cable_face_pull_female.gif",
-    "gif_url": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-03-a5949decd8e8/visual_guides/cable_face_pull_male.gif"
+    "gif_url_male": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-02-f169ce6219d4/visual_guides/cable_face_pull_male.gif",
+    "gif_url_female": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-02-f169ce6219d4/visual_guides/cable_face_pull_female.gif",
+    "gif_url": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-02-f169ce6219d4/visual_guides/cable_face_pull_male.gif"
+  },
+  "burpees": {
+    "exercise_id": "burpees",
+    "name": "Burpees",
+    "target_muscle": "Full Body & Cardio",
+    "gif_url_male": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-02-f169ce6219d4/visual_guides/burpees_male.gif",
+    "gif_url_female": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-02-f169ce6219d4/visual_guides/burpees_female.gif",
+    "gif_url": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-02-f169ce6219d4/visual_guides/burpees_male.gif"
+  },
+  "burpee": {
+    "exercise_id": "burpees",
+    "name": "Burpees",
+    "target_muscle": "Full Body & Cardio",
+    "gif_url_male": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-02-f169ce6219d4/visual_guides/burpees_male.gif",
+    "gif_url_female": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-02-f169ce6219d4/visual_guides/burpees_female.gif",
+    "gif_url": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-02-f169ce6219d4/visual_guides/burpees_male.gif"
+  },
+  "squat": {
+    "exercise_id": "squat",
+    "name": "Squat",
+    "target_muscle": "Quadriceps & Glutes",
+    "gif_url_male": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-02-f169ce6219d4/visual_guides/squat_male.gif",
+    "gif_url_female": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-02-f169ce6219d4/visual_guides/squat_female.gif",
+    "gif_url": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-02-f169ce6219d4/visual_guides/squat_male.gif"
+  },
+  "squats": {
+    "exercise_id": "squats",
+    "name": "Squats",
+    "target_muscle": "Quadriceps & Glutes",
+    "gif_url_male": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-02-f169ce6219d4/visual_guides/squats_male.gif",
+    "gif_url_female": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-02-f169ce6219d4/visual_guides/squats_female.gif",
+    "gif_url": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-02-f169ce6219d4/visual_guides/squats_male.gif"
+  },
+  "deadlift": {
+    "exercise_id": "deadlift",
+    "name": "Deadlift",
+    "target_muscle": "Hamstrings & Back",
+    "gif_url_male": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-02-f169ce6219d4/visual_guides/deadlift_male.gif",
+    "gif_url_female": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-02-f169ce6219d4/visual_guides/deadlift_female.gif",
+    "gif_url": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-02-f169ce6219d4/visual_guides/deadlift_male.gif"
+  },
+  "deadlifts": {
+    "exercise_id": "deadlifts",
+    "name": "Deadlifts",
+    "target_muscle": "Hamstrings & Back",
+    "gif_url_male": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-02-f169ce6219d4/visual_guides/deadlifts_male.gif",
+    "gif_url_female": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-02-f169ce6219d4/visual_guides/deadlifts_female.gif",
+    "gif_url": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-02-f169ce6219d4/visual_guides/deadlifts_male.gif"
+  },
+  "push_up": {
+    "exercise_id": "push_up",
+    "name": "Push-up",
+    "target_muscle": "Chest & Triceps",
+    "gif_url_male": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-02-f169ce6219d4/visual_guides/push_up_male.gif",
+    "gif_url_female": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-02-f169ce6219d4/visual_guides/push_up_female.gif",
+    "gif_url": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-02-f169ce6219d4/visual_guides/push_up_male.gif"
+  },
+  "push_ups": {
+    "exercise_id": "push_ups",
+    "name": "Push-ups",
+    "target_muscle": "Chest & Triceps",
+    "gif_url_male": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-02-f169ce6219d4/visual_guides/push_ups_male.gif",
+    "gif_url_female": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-02-f169ce6219d4/visual_guides/push_ups_female.gif",
+    "gif_url": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-02-f169ce6219d4/visual_guides/push_ups_male.gif"
+  },
+  "curls": {
+    "exercise_id": "curls",
+    "name": "Curls",
+    "target_muscle": "Biceps & Forearms",
+    "gif_url_male": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-02-f169ce6219d4/visual_guides/curls_male.gif",
+    "gif_url_female": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-02-f169ce6219d4/visual_guides/curls_female.gif",
+    "gif_url": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-02-f169ce6219d4/visual_guides/curls_male.gif"
+  },
+  "curl": {
+    "exercise_id": "curl",
+    "name": "Curl",
+    "target_muscle": "Biceps & Forearms",
+    "gif_url_male": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-02-f169ce6219d4/visual_guides/curl_male.gif",
+    "gif_url_female": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-02-f169ce6219d4/visual_guides/curl_female.gif",
+    "gif_url": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-02-f169ce6219d4/visual_guides/curl_male.gif"
   }
 }

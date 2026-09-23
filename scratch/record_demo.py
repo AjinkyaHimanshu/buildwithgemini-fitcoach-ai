@@ -7,8 +7,8 @@ from google.cloud import storage
 
 APP_URL = "https://fitcoach-frontend-477671931395.us-east1.run.app"
 ARTIFACT_DIR = "/config/.gemini/antigravity/brain/691e07c5-54d1-46ee-ac92-601d91653505"
-GCS_BUCKET = "fitcoach-ai-media-3812"
-PROJECT_ID = "qwiklabs-gcp-03-a5949decd8e8"
+PROJECT_ID = os.getenv("GOOGLE_CLOUD_PROJECT", "qwiklabs-gcp-02-f169ce6219d4")
+GCS_BUCKET = f"fitcoach-ai-media-{PROJECT_ID}"
 
 async def record():
     os.makedirs("scratch/videos", exist_ok=True)

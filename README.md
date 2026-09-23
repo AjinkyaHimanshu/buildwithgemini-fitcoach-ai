@@ -1,91 +1,95 @@
-# 🏋️‍♂️ FitCoach AI - Autonomous Fitness & Performance Agent
+# 🏋️ FitCoach AI — Conversational Fitness & Performance Agent
 
-FitCoach AI is an intelligent, multi-tool conversational fitness and performance agent built with **Google ADK (Agent Development Kit)**, **Gemini**, and **Google Cloud Agent Runtime**. It delivers personalized workout routines, evidence-based sports science advice, USDA nutrition lookups, and visual exercise form guides.
-
-![FitCoach AI Demo](./demo.gif)
+FitCoach AI is an frontier conversational performance coach built on the **Google Agent Development Kit (ADK)** framework. It delivers personalized exercise form guides, injury adaptations, custom workout routines, performance logging, USDA macro calculations, Indian vegetarian recipe search, openFDA supplement safety checks, and herbal joint recovery guidance — rendered via an interactive **A2UI** glassmorphic interface.
 
 ---
 
-## ✨ Implemented Agent Capabilities
+## 🎬 Agent Demonstration
 
-FitCoach AI connects to Google Cloud services and external APIs via a 15-tool registry defined in [`app/agent.py`](file:///config/Desktop/Session4/buildwithgemini-fitcoach-ai/app/agent.py):
-
-* 🎬 **Exercise Visual & Motion Guides (`generate_exercise_visual_guide`)**: Streams photorealistic exercise form guides and looping HTML5 micro-videos (`.mp4`) for dynamic exercises like Squats, Push-Ups, and Bicep Curls.
-* 🎥 **Omni Video Generation (`generate_exercise_demonstration_video`)**: Generates exercise demonstration videos using `gemini-omni-flash-preview` in the `global` region. Saves video bytes to ADK Playground Artifacts via `tool_context.save_artifact` and uploads directly to Google Cloud Storage.
-* 🖼️ **Imagen Image Generation (`generate_domain_item_image`)**: Generates fitness item images using `gemini-3.1-flash-lite-image` in the `global` region. Saves image bytes to ADK Playground Artifacts via `tool_context.save_artifact` and uploads directly to Google Cloud Storage.
-* 🧠 **Vertex AI Memory Bank (`PreloadMemoryTool` & `add_session_to_memory`)**: Automatically preloads and persists durable user preferences, injury history, and fitness goals across sessions.
-* 🗄️ **Google Cloud Firestore Catalog (`search_exercise_catalog`, `save_custom_exercise_to_catalog`)**: Connects to the Firestore `exercises` collection to search joint-friendly movements and persist custom exercise definitions.
-* 📚 **Vertex AI RAG Corpus (`consult_rag_corpus`)**: Performs grounding searches across sports science literature using Vertex AI Search / RAG Corpus.
-* 🥗 **USDA Nutrition Database (`search_usda_nutrition_db`)**: Queries calories, protein, carbs, fat, and fiber metrics for food items.
-* 🏋️ **wger Workout Database (`search_wger_workout_database`)**: Queries the wger open workout manager API for exercise descriptions and targeted muscles.
-* 🍲 **TheMealDB Recipes (`search_themealdb_recipes`)**: Searches healthy cooking recipes and meal preparation guides.
-* ⚠️ **openFDA Food Safety (`search_openfda_food_safety`)**: Checks food allergen and recall warnings via openFDA API.
-* 📊 **Calculators & Loggers**:
-  - `calculate_bmi_and_macros`: Calculates BMI and daily macronutrient targets.
-  - `get_custom_workout_routine`: Generates routines adapted for lower back, knee, or shoulder issues.
-  - `get_diet_and_nutrition_plan`: Generates daily meal plans matching vegan, keto, high-protein, or balanced diets.
-  - `log_workout_progress`: Logs completed sets, reps, and calculates progressive overload volume.
+![FitCoach AI Agent Demo](assets/fitcoach_ai_agent_demo.gif)
 
 ---
 
-## 🏗️ Architecture & Project Structure
+## 💬 Prompts Featured in the Demo Sequence
 
-```
-buildwithgemini-fitcoach-ai/
-├── app/
-│   ├── agent.py            # ADK Agent definition, system prompts, and 15 tool functions
-│   └── a2ui_utils.py       # A2UI protocol callback and surface update builder
-├── frontend/
-│   ├── main.py             # FastAPI proxy bridging A2A web client calls to Agent Runtime
-│   └── static/
-│       └── index.html      # Responsive client web UI with A2UI card & video renderer
-├── agents-cli-manifest.yaml # Agent Runtime deployment manifest (ADK base template)
-├── demo.gif                # Looping demonstration recording
-└── README.md               # Project documentation
-```
+The demo video above demonstrates 9 core capabilities centered around a **Push-up** performance & recovery workflow for an Indian vegetarian athlete:
+
+1. **Animated Form Guide**:
+   > *"Can you show me an animated GIF of proper form for Push-ups?"*
+2. **Injury Adaptation & Joint Safety**:
+   > *"My wrists hurt when doing Push-ups on the floor—what's a safer, wrist-friendly modification?"*
+3. **Custom Workout Routine**:
+   > *"Can you build me a 30-minute home Push-up workout routine tailored for a beginner?"*
+4. **Workout Performance Logging**:
+   > *"I just finished my session—can you log 4 sets of 12 Push-ups at bodyweight?"*
+5. **Exercise Anatomy Database Search (wger API)**:
+   > *"What chest and shoulder muscles do Push-ups target?"*
+6. **USDA Nutrition & Macro Breakdown**:
+   > *"How much protein and calories are in 200 grams of Paneer and 100 grams of cooked Chana (chickpeas) after my Push-up workout?"*
+7. **Healthy Vegetarian Recipe Search (TheMealDB API)**:
+   > *"Can you find me healthy high-protein Indian vegetarian recipes like Dal or Paneer for post-workout dinner?"*
+8. **Food & Supplement Safety Alerts (openFDA API)**:
+   > *"Are there any FDA safety warnings or recalls on plant-based vegetarian protein powders?"*
+9. **Herbal Recovery & Soreness (Culpeper RAG Knowledge Base)**:
+   > *"What natural herbs or herbal teas help soothe wrist joint soreness and speed recovery after Push-ups?"*
 
 ---
 
-## 🚀 Local Development & Setup Instructions
+## 🛠️ Implemented Architecture & Google Cloud Integrations
+
+FitCoach AI connects frontier LLMs with domain tools, structured databases, and Google Cloud services:
+
+* **Google Agent Development Kit (ADK)**: Core agent orchestration framework using `gemini-2.5-flash`.
+* **Memory Bank & Conversation Context**: Multi-turn session context tracking athlete gender preferences, conversation history, and user profile state.
+* **Google Cloud Firestore**: Persists user profiles and workout performance logs (sets, reps, bodyweight).
+* **Google Cloud Storage (GCS)**: Stores public high-definition loopable `.gif` motion guides for exercise form demonstrations.
+* **Gemini GenAI Multimodal Image Generation (`gemini-2.5-flash-image`)**: Dynamic generation and fallback handling for custom exercise visual guides.
+* **Culpeper Herbal Vector Knowledge Base (RAG)**: Retrieval-augmented generation for natural herbal remedies and joint recovery.
+* **wger Exercise Database Integration**: Real-time anatomical muscle targets and exercise execution instructions.
+* **USDA FoodData Central API**: Real-time macronutrient breakdown (calories, protein, carbs, fats) for raw and cooked ingredients.
+* **TheMealDB Recipe Search API**: High-protein vegetarian recipe discovery for post-workout meal planning.
+* **openFDA Drug & Supplement Safety API**: Real-time warning and recall alerts for protein powders and supplements.
+* **A2UI Rich Canvas Framework**: Generates structured, responsive glassmorphic cards (`Card`, `Column`, `Row`, `Text`, `Image`).
+
+---
+
+## 🚀 Local Setup & Execution Guide
 
 ### Prerequisites
-- **Python 3.11+**
-- **uv** package manager
-- **Google Cloud SDK (`gcloud`)** authenticated with Application Default Credentials (`gcloud auth application-default login`)
+* Python 3.11+
+* [`uv`](https://docs.astral.sh/uv/) package manager
+* Google Cloud SDK (`gcloud`) with active Vertex AI and Firestore permissions
 
-### 1. Install Dependencies
+### 1. Installation
+Clone the repository and install dependencies:
 ```bash
+git clone https://github.com/your-org/fitcoach-ai.git
+cd fitcoach-ai
 uv sync
 ```
 
-### 2. Run Agent Locally
-Run the ADK agent server in local development mode:
+### 2. Environment Configuration
+Set your Google Cloud credentials and environment variables:
 ```bash
-uv run agents-cli local
+export PROJECT_ID="your-gcp-project-id"
+export GOOGLE_CLOUD_LOCATION="us-central1"
+export GCS_MEDIA_BUCKET="fitcoach-ai-media-your-project-id"
 ```
 
-### 3. Run Web Portal Proxy Locally
-In a separate terminal window, launch the web application frontend:
+### 3. Run Web Application Locally
+Start the FastAPI server hosting the agent web portal:
 ```bash
-cd frontend
-uv run uvicorn main:app --reload --port 8080
+uv run uvicorn app.fast_api_app:app --host 0.0.0.0 --port 8080
 ```
-Open your browser to the local server port to interact with the agent interface.
+Open your browser to test the local interface.
+
+### 4. Deploy to Vertex AI Agent Runtime
+Deploy the agent reasoning engine using `agents-cli`:
+```bash
+uv run agents-cli deploy --project $PROJECT_ID --region us-central1
+```
 
 ---
 
-## ☁️ Deployment Instructions
-
-### Deploy Agent to Vertex AI Agent Runtime
-```bash
-uv run agents-cli deploy --project <YOUR_GCP_PROJECT_ID> --region us-east1
-```
-
-### Deploy Web Portal Proxy to Cloud Run
-```bash
-gcloud run deploy fitcoach-web-portal \
-  --source frontend/ \
-  --region us-east1 \
-  --allow-unauthenticated \
-  --set-env-vars USE_LOCAL_AGENT=false,AGENT_ENGINE_RESOURCE_NAME=projects/<PROJECT_NUMBER>/locations/us-east1/reasoningEngines/<REASONING_ENGINE_ID>
-```
+## 📜 License
+Licensed under the Apache License, Version 2.0.

@@ -8,56 +8,143 @@
      corp network), icons fall back to showing their name as text. -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined">
 <style>
-  :root { --accent:#0d9488; --accent-dark:#0f766e; --accent-gradient:linear-gradient(135deg, #0d9488, #0284c7); --bg:#f1f5f9; --border:#e2e8f0; --user-bg:#0d9488; --user-text:#ffffff; --agent-bg:#ffffff; --agent-border:#e2e8f0; }
+  :root { 
+    --accent:#0d9488; 
+    --accent-dark:#0f766e; 
+    --accent-gradient:linear-gradient(135deg, #0d9488 0%, #0284c7 100%); 
+    --bg:#f8fafc; 
+    --border:#e2e8f0; 
+    --user-bg:linear-gradient(135deg, #0d9488, #0284c7); 
+    --user-text:#ffffff; 
+    --agent-bg:#ffffff; 
+    --agent-border:#e2e8f0; 
+  }
   * { box-sizing:border-box; }
-  body { margin:0; font-family:system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background:var(--bg); display:flex; justify-content:center; align-items:center; height:100vh; color:#0f172a; }
-  .chat-app { display:flex; flex-direction:column; width:100%; max-width:820px; height:100vh; background:#ffffff; box-shadow:0 10px 25px -5px rgba(0,0,0,0.05), 0 8px 10px -6px rgba(0,0,0,0.01); }
-  @media (min-width:768px) { .chat-app { height:92vh; border-radius:16px; overflow:hidden; border:1px solid var(--border); } }
-  header { background:var(--accent-gradient); color:#fff; padding:1.1rem 1.5rem; font-weight:700; font-size:1.25rem; letter-spacing:0.01em; box-shadow:0 2px 10px rgba(13,148,136,0.2); display:flex; align-items:center; justify-content:space-between; }
-  header .subtitle { font-size:0.8rem; font-weight:400; opacity:0.9; margin-left: auto; background:rgba(255,255,255,0.15); padding:0.25rem 0.6rem; border-radius:12px; }
-  #log { flex:1; overflow-y:auto; padding:1.4rem; display:flex; flex-direction:column; gap:1rem; background:#f8fafc; }
-  .msg { display:flex; align-items:flex-end; gap:0.6rem; width:100%; }
+  body { margin:0; font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; background:#f1f5f9; display:flex; justify-content:center; align-items:center; height:100vh; color:#0f172a; }
+  .chat-app { display:flex; flex-direction:column; width:100%; max-width:860px; height:100vh; background:#ffffff; box-shadow:0 20px 30px -10px rgba(15,23,42,0.08); }
+  @media (min-width:768px) { .chat-app { height:92vh; border-radius:20px; overflow:hidden; border:1px solid var(--border); } }
+  
+  header { background:var(--accent-gradient); color:#fff; padding:0.9rem 1.4rem; box-shadow:0 4px 15px rgba(13,148,136,0.25); }
+  
+  #log { flex:1; overflow-y:auto; padding:1.5rem; display:flex; flex-direction:column; gap:1.2rem; background:#f8fafc; scroll-behavior:smooth; }
+  
+  .msg { display:flex; align-items:flex-end; gap:0.7rem; width:100%; animation: fadeInUp 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
   .msg.user { flex-direction:row-reverse; }
-  .avatar { width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.05rem; flex-shrink:0; background:#e2e8f0; color:#334155; }
-  .msg.user .avatar { background:linear-gradient(135deg, #0d9488, #0284c7); color:#fff; }
+  .avatar { width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.1rem; flex-shrink:0; background:#e2e8f0; color:#334155; box-shadow:0 2px 6px rgba(0,0,0,0.06); }
+  .msg.user .avatar { background:var(--accent-gradient); color:#fff; }
   .msg.agent .avatar { background:#0f172a; color:#fff; }
-  .bubble { display:inline-block; padding:0.75rem 1.1rem; border-radius:18px 18px 18px 4px; background:var(--agent-bg); border:1px solid var(--agent-border); text-align:left; max-width:82%; white-space:normal; box-shadow:0 2px 6px rgba(0,0,0,0.04); font-size:0.96rem; line-height:1.5; color:#334155; }
-  .msg.user .bubble { background:var(--accent-gradient); color:var(--user-text); border:none; border-radius:18px 18px 4px 18px; box-shadow:0 3px 10px rgba(13,148,136,0.2); }
-  /* When the reply is an A2UI card, drop the bubble chrome so the card stands alone. */
+  
+  .bubble { display:inline-block; padding:0.9rem 1.25rem; border-radius:20px 20px 20px 4px; background:var(--agent-bg); border:1px solid var(--agent-border); text-align:left; max-width:85%; white-space:normal; box-shadow:0 4px 12px rgba(15,23,42,0.04); font-size:0.96rem; line-height:1.6; color:#334155; }
+  .msg.user .bubble { background:var(--user-bg); color:var(--user-text); border:none; border-radius:20px 20px 4px 20px; box-shadow:0 4px 14px rgba(13,148,136,0.3); }
   .bubble.rich { background:transparent; border:none; padding:0; max-width:100%; white-space:normal; box-shadow:none; }
-  form { display:flex; gap:0.6rem; padding:1rem 1.2rem; border-top:1px solid var(--border); background:#ffffff; align-items:center; }
-  input { flex:1; padding:0.8rem 1.1rem; border:1.5px solid var(--border); border-radius:24px; font-size:0.96rem; outline:none; transition:all 0.2s ease; background:#f8fafc; }
-  input:focus { border-color:var(--accent); background:#ffffff; box-shadow:0 0 0 3px rgba(13,148,136,0.15); }
-  button { padding:0.75rem 1.3rem; border:none; border-radius:24px; background:var(--accent-gradient); color:#fff; font-weight:600; cursor:pointer; font-size:0.95rem; transition:transform 0.15s ease, box-shadow 0.15s ease; box-shadow:0 2px 6px rgba(13,148,136,0.25); display:flex; align-items:center; gap:0.3rem; }
-  button:hover { transform:translateY(-1px); box-shadow:0 4px 12px rgba(13,148,136,0.35); }
-  button:active { transform:translateY(0); }
-
-  /* --- A2UI component styles (Card, Column, Row, Text, Divider, List, Image, Icon) --- */
-  .a2card { border:1px solid var(--border); border-radius:14px; padding:1.1rem; background:#fff; box-shadow:0 2px 8px rgba(0,0,0,.05); max-width:100%; }
-  .a2card + .a2card, .a2col > .a2card { margin-top:.6rem; }
-  .a2col { display:flex; flex-direction:column; gap:.4rem; }
-  .a2row { display:flex; flex-direction:row; gap:.6rem; align-items:center; flex-wrap:wrap; }
+  
+  /* --- Markdown Formatting inside Bubbles --- */
+  .bubble h1, .bubble h2, .bubble h3, .bubble h4 { margin:0.6rem 0 0.4rem; color:#0f172a; font-weight:700; line-height:1.3; }
+  .bubble h1 { font-size:1.35rem; }
+  .bubble h2 { font-size:1.2rem; }
+  .bubble h3 { font-size:1.05rem; }
+  .bubble p { margin:0 0 0.5rem; }
+  .bubble p:last-child { margin-bottom:0; }
+  .bubble ul, .bubble ol { margin:0.4rem 0 0.6rem; padding-left:1.4rem; }
+  .bubble li { margin-bottom:0.3rem; }
+  .bubble strong { color:#0f172a; font-weight:600; }
+  .bubble code { background:#f1f5f9; color:#0f766e; padding:0.15rem 0.4rem; border-radius:6px; font-size:0.88rem; font-family:monospace; }
+  
+  /* --- A2UI Component Card Styles --- */
+  .a2card { border:1px solid #e2e8f0; border-radius:16px; padding:1.25rem; background:#ffffff; box-shadow:0 6px 18px rgba(15,23,42,0.05); max-width:100%; transition:transform 0.2s ease, box-shadow 0.2s ease; }
+  .a2card:hover { box-shadow:0 10px 25px rgba(15,23,42,0.08); }
+  .a2card + .a2card, .a2col > .a2card { margin-top:0.75rem; }
+  .a2col { display:flex; flex-direction:column; gap:0.5rem; }
+  .a2row { display:flex; flex-direction:row; gap:0.7rem; align-items:center; flex-wrap:wrap; }
   .a2row.between { justify-content:space-between; }
-  .a2text { margin:0; line-height:1.4; }
-  .a2text.a2-h1 { font-size:1.5rem; font-weight:700; }
-  .a2text.a2-h2 { font-size:1.25rem; font-weight:700; }
-  .a2text.a2-h3 { font-size:1.1rem; font-weight:600; }
-  .a2text.a2-h4 { font-size:1rem; font-weight:600; }
-  .a2text.a2-caption { font-size:.85rem; color:#666; }
-  .a2divider { border:none; border-top:1px solid var(--border); margin:.4rem 0; width:100%; }
-  .a2img { width:100%; max-width:100%; min-height:220px; object-fit:cover; border-radius:12px; margin:.6rem 0; display:block; box-shadow:0 4px 12px rgba(0,0,0,0.1); background:#f8fafc; }
-  /* Prompt Chips */
-  .suggestions-row { display:flex; gap:.5rem; padding:.7rem 1.2rem .4rem; background:#ffffff; justify-content:flex-start; overflow-x:auto; border-top:1px solid #f1f5f9; }
-  .chip { padding:.45rem .9rem; font-size:.84rem; border:1px solid var(--border); border-radius:20px; background:#f8fafc; color:#334155; cursor:pointer; font-weight:500; transition:all 0.15s ease-in-out; white-space:nowrap; }
-  .chip:hover { background:var(--accent); color:#fff; border-color:var(--accent); transform:translateY(-1px); box-shadow:0 2px 6px rgba(13,148,136,0.2); }
+  .a2text { margin:0; line-height:1.5; color:#334155; }
+  .a2text.a2-h1 { font-size:1.4rem; font-weight:700; color:#0f172a; letter-spacing:-0.01em; }
+  .a2text.a2-h2 { font-size:1.2rem; font-weight:700; color:#0f172a; }
+  .a2text.a2-h3 { font-size:1.05rem; font-weight:600; color:#0f172a; }
+  .a2text.a2-h4 { font-size:0.96rem; font-weight:600; color:#334155; }
+  .a2text.a2-caption { font-size:0.85rem; color:#64748b; }
+  .a2divider { border:none; border-top:1px solid #f1f5f9; margin:0.6rem 0; width:100%; }
+  
+  /* --- Visual Guide GIF / Image Styling --- */
+  .a2img { width:100%; max-width:100%; max-height:420px; object-fit:cover; border-radius:14px; margin:0.75rem 0; display:block; box-shadow:0 6px 20px rgba(0,0,0,0.12); border:1px solid #e2e8f0; background:#f8fafc; }
+  
+  /* --- Prompt & Follow-up Chips --- */
+  .suggestions-row { display:flex; gap:0.5rem; padding:0.75rem 1.2rem; background:#ffffff; justify-content:flex-start; overflow-x:auto; border-top:1px solid #f1f5f9; }
+  .chip { padding:0.5rem 1rem; font-size:0.85rem; border:1px solid var(--border); border-radius:24px; background:#f8fafc; color:#334155; cursor:pointer; font-weight:500; transition:all 0.2s cubic-bezier(0.16, 1, 0.3, 1); white-space:nowrap; display:flex; align-items:center; gap:0.4rem; }
+  .chip:hover { background:var(--accent); color:#fff; border-color:var(--accent); transform:translateY(-2px); box-shadow:0 4px 12px rgba(13,148,136,0.25); }
+  
+  form { display:flex; gap:0.6rem; padding:0.9rem 1.2rem; border-top:1px solid var(--border); background:#ffffff; align-items:center; }
+  input { flex:1; padding:0.85rem 1.2rem; border:1.5px solid var(--border); border-radius:24px; font-size:0.96rem; outline:none; transition:all 0.2s ease; background:#f8fafc; color:#0f172a; }
+  input:focus { border-color:var(--accent); background:#ffffff; box-shadow:0 0 0 3.5px rgba(13,148,136,0.15); }
+  button { padding:0.8rem 1.4rem; border:none; border-radius:24px; background:var(--accent-gradient); color:#fff; font-weight:600; cursor:pointer; font-size:0.95rem; transition:transform 0.15s ease, box-shadow 0.15s ease, background 0.2s ease; box-shadow:0 3px 10px rgba(13,148,136,0.25); display:flex; align-items:center; gap:0.3rem; }
+  button:hover { transform:translateY(-1px); box-shadow:0 5px 15px rgba(13,148,136,0.35); }
+  button:active { transform:translateY(0); }
+  button.stop-btn { background:linear-gradient(135deg, #e11d48 0%, #be123c 100%) !important; box-shadow:0 3px 10px rgba(225,29,72,0.35) !important; }
+  input:disabled { background:#e2e8f0 !important; color:#64748b !important; cursor:not-allowed !important; border-color:#cbd5e1 !important; }
+
+  /* --- Side Drawer Menu --- */
+  .drawer-backdrop { position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(15,23,42,0.45); backdrop-filter:blur(3px); z-index:998; opacity:0; pointer-events:none; transition:opacity 0.3s ease; }
+  .drawer-backdrop.open { opacity:1; pointer-events:auto; }
+
+  .drawer-menu { position:fixed; top:0; right:0; width:340px; max-width:85vw; height:100vh; background:#ffffff; box-shadow:-8px 0 30px rgba(0,0,0,0.18); z-index:999; transform:translateX(100%); transition:transform 0.3s cubic-bezier(0.16, 1, 0.3, 1); display:flex; flex-direction:column; overflow:hidden; }
+  .drawer-menu.open { transform:translateX(0); }
+
+  .drawer-header { background:var(--accent-gradient); color:#ffffff; padding:1.2rem 1.4rem; display:flex; align-items:center; justify-content:space-between; box-shadow:0 2px 10px rgba(13,148,136,0.2); }
+  .drawer-title { font-weight:700; font-size:1.1rem; display:flex; align-items:center; gap:0.5rem; }
+  .drawer-close-btn { background:rgba(255,255,255,0.2); border:none; color:#ffffff; width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.05rem; cursor:pointer; transition:background 0.2s ease; }
+  .drawer-close-btn:hover { background:rgba(255,255,255,0.35); }
+
+  .drawer-content { flex:1; overflow-y:auto; padding:1.2rem; display:flex; flex-direction:column; gap:1.4rem; background:#f8fafc; }
+  .drawer-section-title { font-size:0.76rem; text-transform:uppercase; font-weight:700; color:#0f766e; letter-spacing:0.05em; margin-bottom:0.5rem; }
+  .drawer-item { display:flex; align-items:flex-start; gap:0.75rem; padding:0.75rem 0.85rem; border-radius:12px; background:#ffffff; border:1px solid #e2e8f0; cursor:pointer; transition:all 0.2s ease; box-shadow:0 2px 5px rgba(0,0,0,0.02); }
+  .drawer-item:hover { border-color:var(--accent); background:#f0fdfa; transform:translateY(-1px); box-shadow:0 4px 12px rgba(13,148,136,0.12); }
+  .item-icon { font-size:1.3rem; flex-shrink:0; margin-top:2px; }
+  .item-name { font-weight:600; font-size:0.9rem; color:#0f172a; line-height:1.2; }
+  .item-desc { font-size:0.78rem; color:#64748b; line-height:1.3; margin-top:2px; }
 </style>
+
+
 </head>
 <body>
 <div class="chat-app">
-  <header>
-    <span>🏋️‍♂️ FitCoach AI</span>
-    <span class="subtitle">AI Fitness Assistant</span>
+  <header style="display:flex; align-items:center; justify-content:space-between; gap:0.5rem; padding:0.9rem 1.2rem;">
+    <div style="display:flex; align-items:center; gap:0.6rem;">
+      <span style="font-size:1.4rem;">🏋️‍♂️</span>
+      <div>
+        <div style="font-weight:700; font-size:1.15rem; line-height:1.2;">FitCoach AI</div>
+        <div style="font-size:0.75rem; opacity:0.85; font-weight:400;">Personal Fitness & Nutrition Coach</div>
+      </div>
+    </div>
+    
+    <div style="display:flex; align-items:center; gap:0.5rem;">
+      <!-- Athlete Gender & Form Toggle -->
+      <div style="background:rgba(0,0,0,0.22); border:1px solid rgba(255,255,255,0.35); border-radius:20px; padding:2px; display:flex; align-items:center;">
+        <button id="gender-male-btn" type="button" style="background:#ffffff; color:#0f766e; border:none; padding:0.3rem 0.65rem; border-radius:16px; font-size:0.78rem; font-weight:700; cursor:pointer; transition:all 0.2s ease;">
+          🏃‍♂️ Male
+        </button>
+        <button id="gender-female-btn" type="button" style="background:transparent; color:#ffffff; border:none; padding:0.3rem 0.65rem; border-radius:16px; font-size:0.78rem; font-weight:600; cursor:pointer; transition:all 0.2s ease;">
+          🏃‍♀️ Female
+        </button>
+      </div>
+
+      <button id="new-chat-btn" type="button" style="background:rgba(255,255,255,0.2); border:1px solid rgba(255,255,255,0.4); padding:0.35rem 0.75rem; border-radius:20px; color:#fff; font-size:0.82rem; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:0.3rem; backdrop-filter:blur(4px); transition:all 0.2s ease;">
+        <span style="font-size:0.95rem;">💬</span>
+        <span>New</span>
+      </button>
+
+      <!-- Side Menu Drawer Toggle (3 Horizontal Lines) -->
+      <button id="menu-btn" type="button" title="FitCoach AI Capabilities" style="background:rgba(255,255,255,0.2); border:1px solid rgba(255,255,255,0.4); padding:0.35rem 0.65rem; border-radius:20px; color:#fff; font-size:1.15rem; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; backdrop-filter:blur(4px); transition:all 0.2s ease;">
+        ☰
+      </button>
+    </div>
   </header>
+
+
   <div id="log"></div>
   <div id="suggestions" class="suggestions-row">
     <button type="button" class="chip" data-prompt="Create a 45-minute dumbbell upper body workout for an intermediate lifter">🏋️ 45-min Workout</button>
@@ -66,9 +153,118 @@
   </div>
   <form id="form">
     <input id="input" placeholder="Ask FitCoach AI something…" autocomplete="off" autofocus>
-    <button>Send ➔</button>
+    <button id="send-btn" type="submit">Send ➔</button>
   </form>
 </div>
+
+<!-- Side Drawer Backdrop -->
+<div id="side-drawer-backdrop" class="drawer-backdrop"></div>
+
+<!-- Side Drawer Menu -->
+<aside id="side-drawer" class="drawer-menu">
+  <div class="drawer-header">
+    <div class="drawer-title">
+      <span>🏋️‍♂️</span>
+      <span>What FitCoach AI Can Do</span>
+    </div>
+    <button id="close-drawer-btn" class="drawer-close-btn" type="button" title="Close Menu">✕</button>
+  </div>
+  
+  <div class="drawer-content">
+    <div class="drawer-section">
+      <div class="drawer-section-title">🎬 Movement & Visual Form Guides</div>
+      <div class="drawer-item" data-prompt="Generate exercise visual guide for Burpees">
+        <span class="item-icon">🏃‍♂️</span>
+        <div class="item-text">
+          <div class="item-name">Exercise Form Animations</div>
+          <div class="item-desc">Step-by-step male & female athlete movement guides</div>
+        </div>
+      </div>
+      <div class="drawer-item" data-prompt="Demonstrate Dumbbell Bicep Curl form with video">
+        <span class="item-icon">🎥</span>
+        <div class="item-text">
+          <div class="item-name">Motion Video Demos</div>
+          <div class="item-desc">Short motion video demonstrations for key gym exercises</div>
+        </div>
+      </div>
+      <div class="drawer-item" data-prompt="Suggest low-impact exercises for sensitive knees">
+        <span class="item-icon">🛡️</span>
+        <div class="item-text">
+          <div class="item-name">Joint-Friendly Movements</div>
+          <div class="item-desc">Safe exercises tailored for lower back, knee, or shoulder care</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="drawer-section">
+      <div class="drawer-section-title">🥗 Nutrition & Diet Intelligence</div>
+      <div class="drawer-item" data-prompt="Calculate BMI and macro split for weight loss (age 28, height 175cm, weight 78kg)">
+        <span class="item-icon">📊</span>
+        <div class="item-text">
+          <div class="item-name">Calories & Macro Calculator</div>
+          <div class="item-desc">Personalized daily calorie targets & protein/carb/fat splits</div>
+        </div>
+      </div>
+      <div class="drawer-item" data-prompt="Check nutrition info for 100g Grilled Chicken Breast">
+        <span class="item-icon">🍎</span>
+        <div class="item-text">
+          <div class="item-name">Food Nutrition Lookup</div>
+          <div class="item-desc">Instant calories, macros, & micronutrient details</div>
+        </div>
+      </div>
+      <div class="drawer-item" data-prompt="Suggest healthy Indian high-protein vegetarian recipes">
+        <span class="item-icon">🍲</span>
+        <div class="item-text">
+          <div class="item-name">Healthy Recipes & Meal Prep</div>
+          <div class="item-desc">Step-by-step recipes & regional meal preparation ideas</div>
+        </div>
+      </div>
+      <div class="drawer-item" data-prompt="Check food allergen safety warning for peanut butter">
+        <span class="item-icon">⚠️</span>
+        <div class="item-text">
+          <div class="item-name">Food Safety & Recall Alerts</div>
+          <div class="item-desc">Allergen warnings & ingredient safety checks</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="drawer-section">
+      <div class="drawer-section-title">🏋️ Workout Routines & Performance</div>
+      <div class="drawer-item" data-prompt="Create a 45-minute lower-back friendly dumbbell workout split">
+        <span class="item-icon">⚡</span>
+        <div class="item-text">
+          <div class="item-name">Custom Workout Routines</div>
+          <div class="item-desc">Personalized 3-day, 4-day, or 5-day training splits</div>
+        </div>
+      </div>
+      <div class="drawer-item" data-prompt="What is the optimal rep range for muscle hypertrophy according to sports science?">
+        <span class="item-icon">📚</span>
+        <div class="item-text">
+          <div class="item-name">Sports Science Advice</div>
+          <div class="item-desc">Evidence-based exercise, cardio, & recovery guidance</div>
+        </div>
+      </div>
+      <div class="drawer-item" data-prompt="Show me the best exercises for targeting upper chest muscles">
+        <span class="item-icon">🎯</span>
+        <div class="item-text">
+          <div class="item-name">Target Muscle Explorer</div>
+          <div class="item-desc">Discover exercises targeting specific muscle groups</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="drawer-section">
+      <div class="drawer-section-title">🧠 Personalization & Goal Memory</div>
+      <div class="drawer-item" data-prompt="What are my saved fitness goals and injury history?">
+        <span class="item-icon">⭐</span>
+        <div class="item-text">
+          <div class="item-name">Saved Preferences & Goals</div>
+          <div class="item-desc">Remembers your history, preferences, & injuries</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</aside>
 
 <script>
 const log = document.getElementById("log");
@@ -402,41 +598,252 @@ function renderReply(b, parts) {
   }
   if (!b.childNodes.length) b.textContent = "(no response)";
   log.scrollTop = log.scrollHeight;
+
+  // Extract dynamic follow-up questions to populate prompt chips
+  const fullText = textStr + "\n" + (a2ui.length ? flattenText(a2ui) : "");
+  const followUps = [];
+  const rawLines = fullText.split('\n');
+  rawLines.forEach(l => {
+    const clean = l.replace(/^[\s\d\.\-\*\💡]+/, '').trim();
+    const wordCount = clean.split(/\s+/).length;
+    const lower = clean.toLowerCase();
+    const isAssistantPhrased = lower.startsWith("can i help") || lower.startsWith("would you like me") || lower.startsWith("do you want me") || lower.startsWith("shall i");
+    if (clean.endsWith('?') && clean.length > 5 && wordCount <= 15 && !lower.includes('follow-up questions') && !isAssistantPhrased) {
+      if (!followUps.includes(clean)) followUps.push(clean);
+    }
+  });
+
+  if (followUps.length > 0) {
+    const sugDiv = document.getElementById("suggestions");
+    if (sugDiv) {
+      sugDiv.innerHTML = "";
+      followUps.slice(0, 2).forEach((q, idx) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "chip";
+        btn.setAttribute("data-prompt", q);
+        btn.textContent = (idx === 0 ? "❓ " : "💡 ") + q;
+        btn.addEventListener("click", () => {
+          input.value = q;
+          if (form.requestSubmit) form.requestSubmit();
+          else form.dispatchEvent(new Event("submit", { cancelable: true, bubbles: true }));
+        });
+        sugDiv.appendChild(btn);
+      });
+    }
+  }
 }
+
+
+let currentGender = "male";
+const maleBtn = document.getElementById("gender-male-btn");
+const femaleBtn = document.getElementById("gender-female-btn");
+
+if (maleBtn && femaleBtn) {
+  maleBtn.addEventListener("click", () => {
+    currentGender = "male";
+    maleBtn.style.background = "#ffffff";
+    maleBtn.style.color = "#0f766e";
+    maleBtn.style.fontWeight = "700";
+    femaleBtn.style.background = "transparent";
+    femaleBtn.style.color = "#ffffff";
+    femaleBtn.style.fontWeight = "600";
+  });
+  femaleBtn.addEventListener("click", () => {
+    currentGender = "female";
+    femaleBtn.style.background = "#ffffff";
+    femaleBtn.style.color = "#0f766e";
+    femaleBtn.style.fontWeight = "700";
+    maleBtn.style.background = "transparent";
+    maleBtn.style.color = "#ffffff";
+    maleBtn.style.fontWeight = "600";
+  });
+}
+
+const sendBtn = document.getElementById("send-btn");
+let currentAbortController = null;
 
 // The proxy returns { parts: [{kind:"text",text} | {kind:"a2ui",data}] }.
 form.addEventListener("submit", async (ev) => {
   ev.preventDefault();
+
+  // If a request is currently running, clicking Stop cancels it!
+  if (currentAbortController) {
+    currentAbortController.abort();
+    currentAbortController = null;
+    return;
+  }
+
   const text = input.value.trim();
   if (!text) return;
+
   bubble("user").textContent = text;
   input.value = "";
   const b = bubble("agent"); b.textContent = "…";
+
+  // Lock input bar and convert Send button into Stop button
+  input.disabled = true;
+  if (sendBtn) {
+    sendBtn.innerHTML = "⏹️ Stop";
+    sendBtn.classList.add("stop-btn");
+  }
+
+  currentAbortController = new AbortController();
+
   try {
-    const res = await fetch("/chat", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ message: text }) });
-    // Read as text first, then parse. If the proxy ever returns a non-JSON error
-    // page (e.g. a plain "Internal Server Error"), show that body instead of a
-    // cryptic "Unexpected token" JSON error.
+    const payloadMessage = `${text}\n[Context: Preferred Athlete Form: ${currentGender}]`;
+    const res = await fetch("/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: payloadMessage }),
+      signal: currentAbortController.signal
+    });
+
     const raw = await res.text();
     let data;
     try { data = JSON.parse(raw); }
     catch { throw new Error(`Server returned non-JSON (HTTP ${res.status}). ${raw.slice(0, 300)}`); }
     renderReply(b, data.parts || []);
   } catch (e) {
-    b.textContent = "Error: " + e.message;
+    if (e.name === "AbortError") {
+      b.textContent = "⏹️ [Response stopped by user]";
+    } else {
+      b.textContent = "Error: " + e.message;
+    }
+  } finally {
+    currentAbortController = null;
+    input.disabled = false;
+    if (sendBtn) {
+      sendBtn.innerHTML = "Send ➔";
+      sendBtn.classList.remove("stop-btn");
+    }
+    input.focus();
   }
 });
 
-document.querySelectorAll(".chip").forEach(chip => {
-  chip.addEventListener("click", () => {
-    input.value = chip.getAttribute("data-prompt") || chip.textContent;
-    if (form.requestSubmit) {
-      form.requestSubmit();
-    } else {
-      form.dispatchEvent(new Event("submit", { cancelable: true, bubbles: true }));
+// Real-time typeahead suggestions as user types (max 2 suggestions above chat bar)
+const DICTIONARY_SUGGESTIONS = [
+  "Show Burpees visual guide",
+  "Squat form visual guide",
+  "Push-up motion guide",
+  "Bicep Curls visual guide",
+  "Plank posture animation",
+  "Chest Supported Row form",
+  "Indian High-Protein Meal Plan",
+  "Calculate my heart rate zones",
+  "Check FDA supplement safety",
+  "Weekly workout plan for beginners"
+];
+
+let defaultSuggestionsHTML = "";
+const sugDiv = document.getElementById("suggestions");
+if (sugDiv) {
+  defaultSuggestionsHTML = sugDiv.innerHTML;
+}
+
+input.addEventListener("input", () => {
+  const val = input.value.trim().toLowerCase();
+  if (!sugDiv) return;
+
+  if (!val) {
+    sugDiv.innerHTML = defaultSuggestionsHTML;
+    bindChipClickEvents();
+    return;
+  }
+
+  const matches = DICTIONARY_SUGGESTIONS.filter(item => 
+    item.toLowerCase().includes(val)
+  ).slice(0, 2);
+
+  if (matches.length > 0) {
+    sugDiv.innerHTML = "";
+    matches.forEach((q, idx) => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "chip";
+      btn.setAttribute("data-prompt", q);
+      btn.textContent = (idx === 0 ? "🔍 " : "✨ ") + q;
+      btn.addEventListener("click", () => {
+        input.value = q;
+        if (form.requestSubmit) form.requestSubmit();
+        else form.dispatchEvent(new Event("submit", { cancelable: true, bubbles: true }));
+      });
+      sugDiv.appendChild(btn);
+    });
+  }
+});
+
+function bindChipClickEvents() {
+  document.querySelectorAll(".chip").forEach(chip => {
+    chip.addEventListener("click", () => {
+      input.value = chip.getAttribute("data-prompt") || chip.textContent;
+      if (form.requestSubmit) {
+        form.requestSubmit();
+      } else {
+        form.dispatchEvent(new Event("submit", { cancelable: true, bubbles: true }));
+      }
+    });
+  });
+}
+bindChipClickEvents();
+
+const newChatBtn = document.getElementById("new-chat-btn");
+if (newChatBtn) {
+  newChatBtn.addEventListener("click", async () => {
+    log.innerHTML = "";
+    input.value = "";
+    const b = bubble("agent");
+    b.textContent = `✨ Session reset! Ready for a new conversation. Currently set to ${currentGender.toUpperCase()} athlete form preference. Ask me for workout plans, Indian exercise visual guides, heart rate zones, or nutrition advice!`;
+    try {
+      await fetch("/new_session", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ user_id: "web-user" }) });
+    } catch (e) {
+      console.log("Session reset note:", e);
+    }
+  });
+}
+
+// Side Drawer Menu Handlers
+const menuBtn = document.getElementById("menu-btn");
+const closeDrawerBtn = document.getElementById("close-drawer-btn");
+const sideDrawer = document.getElementById("side-drawer");
+const drawerBackdrop = document.getElementById("side-drawer-backdrop");
+
+function openDrawer() {
+  if (sideDrawer) sideDrawer.classList.add("open");
+  if (drawerBackdrop) drawerBackdrop.classList.add("open");
+}
+
+function closeDrawer() {
+  if (sideDrawer) sideDrawer.classList.remove("open");
+  if (drawerBackdrop) drawerBackdrop.classList.remove("open");
+}
+
+if (menuBtn) menuBtn.addEventListener("click", openDrawer);
+if (closeDrawerBtn) closeDrawerBtn.addEventListener("click", closeDrawer);
+if (drawerBackdrop) drawerBackdrop.addEventListener("click", closeDrawer);
+
+document.addEventListener("keydown", (ev) => {
+  if (ev.key === "Escape") closeDrawer();
+});
+
+// Click on capability drawer item to auto-fill input and submit!
+document.querySelectorAll(".drawer-item").forEach(item => {
+  item.addEventListener("click", () => {
+    const prompt = item.getAttribute("data-prompt");
+    if (prompt) {
+      input.value = prompt;
+      closeDrawer();
+      if (form.requestSubmit) {
+        form.requestSubmit();
+      } else {
+        form.dispatchEvent(new Event("submit", { cancelable: true, bubbles: true }));
+      }
     }
   });
 });
 </script>
 </body>
 </html>
+
+
+

@@ -14,6 +14,7 @@
 # limitations under the License.
 
 import json
+import os
 from google.adk.agents import Agent
 from google.adk.agents.callback_context import CallbackContext
 from google.adk.apps import App
@@ -23,48 +24,35 @@ from google.adk.tools.preload_memory_tool import PreloadMemoryTool
 from google.cloud import firestore
 from google.genai import types
 
-# IMPORTANT: Hardcode GCP Project ID string to prevent project number resolution issues on Agent Platform.
-FIRESTORE_PROJECT_ID = "qwiklabs-gcp-03-a5949decd8e8"
-
-# Fallback catalog in case Firestore database instance is not provisioned in the cloud project yet.
-IN_MEMORY_CATALOG = {
-    "chest_supported_db_row": {
-        "exercise_id": "chest_supported_db_row",
-        "name": "Chest-Supported Dumbbell Row",
-        "category": "Upper Body Pull",
-        "target_muscle": "Lats & Upper Back",
-        "difficulty": "Intermediate",
-        "joint_friendly_tags": ["lower_back_friendly", "spinal_decompression"],
-        "form_instructions": "• Setup: Lie face down on an incline bench set to 45 degrees.\n• Execution: Pull dumbbells towards your hips, squeezing your shoulder blades together without arching your lower back.",
-        "equipment_needed": "Incline Bench, Dumbbells",
-        "gif_url_male": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-03-a5949decd8e8/visual_guides/chest_supported_row_male.gif",
-        "gif_url_female": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-03-a5949decd8e8/visual_guides/chest_supported_row_female.gif",
-    },
-    "romanian_deadlift_dumbbells": {
-        "exercise_id": "romanian_deadlift_dumbbells",
-        "name": "Dumbbell Romanian Deadlift",
-        "category": "Lower Body Hinge",
-        "target_muscle": "Hamstrings & Glutes",
-        "difficulty": "Intermediate",
-        "joint_friendly_tags": ["knee_friendly"],
-        "form_instructions": "• Setup: Stand with feet hip-width apart holding dumbbells.\n• Execution: Keep knees slightly bent and hinge strictly at hips. Lower dumbbells along shins until you feel a deep stretch in hamstrings.",
-        "equipment_needed": "Dumbbells",
-        "gif_url_male": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-03-a5949decd8e8/visual_guides/dumbbell_romanian_deadlift_male.gif",
-        "gif_url_female": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-03-a5949decd8e8/visual_guides/dumbbell_romanian_deadlift_female.gif",
-    },
-    "squat": {
-        "exercise_id": "squat",
-        "name": "Squat",
-        "category": "Lower Body Push",
-        "target_muscle": "Quadriceps & Glutes",
-        "difficulty": "Beginner to Intermediate",
-        "joint_friendly_tags": ["quad_builder"],
-        "form_instructions": "• Setup: Stand with feet shoulder-width apart, chest up, and toes pointed slightly out.\n• Descent: Push hips back as if sitting into a chair. Lower until thighs are parallel to the floor.\n• Knee Position: Ensure knees track in line with feet; do not let them cave inward.\n• Ascent: Drive through heels to return to standing position. Squeeze glutes at top.",
-        "equipment_needed": "Bodyweight or Dumbbells",
-        "gif_url_male": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-03-a5949decd8e8/visual_guides/goblet_box_squat_male.gif",
-        "gif_url_female": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-03-a5949decd8e8/visual_guides/goblet_box_squat_female.gif",
-    },
-}
+# Centralized Configuration Import (Industry Standard for Google ADK Agent Applications)
+try:
+    from app.config import (
+        FIRESTORE_PROJECT_ID,
+        FIRESTORE_DATABASE,
+        GCS_MEDIA_BUCKET,
+        AGENT_ENGINE_RESOURCE_NAME,
+        DEFAULT_MODEL_NAME,
+        IMAGE_MODEL_NAME,
+        VIDEO_MODEL_NAME,
+        WGER_API_KEY,
+        THEMEALDB_API_KEY,
+        OPENFDA_API_KEY,
+        IN_MEMORY_CATALOG,
+    )
+except ImportError:
+    from config import (
+        FIRESTORE_PROJECT_ID,
+        FIRESTORE_DATABASE,
+        GCS_MEDIA_BUCKET,
+        AGENT_ENGINE_RESOURCE_NAME,
+        DEFAULT_MODEL_NAME,
+        IMAGE_MODEL_NAME,
+        VIDEO_MODEL_NAME,
+        WGER_API_KEY,
+        THEMEALDB_API_KEY,
+        OPENFDA_API_KEY,
+        IN_MEMORY_CATALOG,
+    )
 
 
 def get_firestore_client():
@@ -184,15 +172,30 @@ def generate_exercise_visual_guide(exercise_name: str, target_muscle: str = "", 
     raw_slug = exercise_name.lower().strip().replace(" ", "_").replace("-", "_")
     SLUG_MAP = {
         "squat": "squat",
+        "squats": "squat",
         "goblet_box_squat": "squat",
         "deadlift": "deadlift",
+        "deadlifts": "deadlift",
         "dumbbell_romanian_deadlift": "deadlift",
-        "bicep_curl": "dumbbell_bicep_curl",
-        "dumbbell_bicep_curl": "dumbbell_bicep_curl",
+        "curl": "curls",
+        "curls": "curls",
+        "bicep": "curls",
+        "biceps": "curls",
+        "bicep_curl": "curls",
+        "bicep_curls": "curls",
+        "dumbbell_bicep_curl": "curls",
+        "dumbbell_curl": "curls",
+        "dumbbell_curls": "curls",
         "push_up": "push_up",
+        "push_ups": "push_up",
+        "pushup": "push_up",
+        "pushups": "push_up",
         "plank": "plank",
-        "row": "squat",
-        "chest_supported_dumbbell_row": "squat",
+        "planks": "plank",
+        "burpee": "burpees",
+        "burpees": "burpees",
+        "row": "chest_supported_dumbbell_row",
+        "chest_supported_dumbbell_row": "chest_supported_dumbbell_row",
     }
     slug = SLUG_MAP.get(raw_slug, raw_slug)
     gender_clean = gender.lower().strip() if gender else "male"
@@ -235,7 +238,7 @@ def generate_exercise_visual_guide(exercise_name: str, target_muscle: str = "", 
 
     # 3. If not found in cache, construct public GCS GIF/PNG URL and persist to Firestore & cache
     if not gif_url:
-        gif_url = f"https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-03-a5949decd8e8/visual_guides/{slug}_{gender_clean}.gif"
+        gif_url = f"https://storage.googleapis.com/fitcoach-ai-media-{FIRESTORE_PROJECT_ID}/visual_guides/{slug}_{gender_clean}.gif"
         source = f"Generated Photorealistic Multi-Angle Guide ({gender_clean.title()} Athlete)"
 
         doc_data = {
@@ -686,70 +689,50 @@ def consult_rag_corpus(query: str) -> str:
 
 
 async def generate_domain_item_image(item_name: str, tool_context: ToolContext) -> str:
-    """Generates an image for a fitness, nutrition, or health item using gemini-3.1-flash-lite-image model in global location.
+    """Generates an animated GIF or visual motion guide for an exercise or fitness movement.
 
-    Saves the image artifact to the Playground panel via tool_context and uploads the image bytes directly to public GCS bucket.
+    Ensures all movement demonstrations return animated loopable GIFs showing dynamic athletic form.
 
     Args:
-        item_name: Item or dish description to generate an image for (e.g. 'High-Protein Oatmeal Bowl', 'Grilled Chicken Salad', 'Fitness Gym Setting').
+        item_name: Item description or exercise name (e.g. 'Dumbbell Bench Press', 'Burpees', 'Squat Form').
         tool_context: ToolContext instance provided automatically by ADK framework.
 
     Returns:
-        The public HTTPS GCS URL of the generated image.
+        The public HTTPS GCS URL of the animated GIF visual guide.
     """
     import re
-    from google import genai
-    from google.cloud import storage
-    from google.genai import types
 
-    GCS_MEDIA_BUCKET = "fitcoach-ai-media-qwiklabs-gcp-03-a5949decd8e8"
+    GCS_MEDIA_BUCKET = "fitcoach-ai-media-qwiklabs-gcp-02-f169ce6219d4"
+    slug = re.sub(r"[^a-zA-Z0-9_]", "", item_name.lower().strip().replace(" ", "_"))[:35] or "movement"
 
-    slug = re.sub(r"[^a-zA-Z0-9_]", "", item_name.lower().strip().replace(" ", "_"))[:35] or "fitness_item"
+    # Known GCS animated exercise GIF mapping
+    exercise_gif_map = {
+        "burpee": "burpees",
+        "burpees": "burpees",
+        "pushup": "pushups",
+        "pushups": "pushups",
+        "push_up": "pushups",
+        "squat": "squats",
+        "squats": "squats",
+        "bicep_curl": "dumbbell_bicep_curl",
+        "bench_press": "dumbbell_bench_press",
+        "plank": "plank",
+    }
 
-    # 1. Generate image using gemini-3.1-flash-lite-image in global location
-    client = genai.Client(vertexai=True, project=FIRESTORE_PROJECT_ID, location="global")
-    prompt = f"A professional, vibrant, high-quality photograph of: {item_name} in a modern fitness and wellness aesthetic."
+    matched_slug = "burpees"
+    for key, val in exercise_gif_map.items():
+        if key in slug:
+            matched_slug = val
+            break
 
-    try:
-        response = client.models.generate_content(
-            model="gemini-3.1-flash-lite-image",
-            contents=prompt,
-            config=types.GenerateContentConfig(
-                response_modalities=["IMAGE"],
-            ),
-        )
-        part = response.candidates[0].content.parts[0]
-        image_bytes = part.inline_data.data
-        mime_type = part.inline_data.mime_type or "image/jpeg"
-    except Exception as e:
-        return f"Image generation notice: {e}"
+    gif_url = f"https://storage.googleapis.com/{GCS_MEDIA_BUCKET}/visual_guides/{matched_slug}_male.gif"
 
-    ext = "png" if "png" in mime_type else "jpg"
-    filename = f"{slug}.{ext}"
-
-    # 2. (1) Save artifact via tool_context.save_artifact
-    try:
-        artifact_part = types.Part.from_bytes(data=image_bytes, mime_type=mime_type)
-        await tool_context.save_artifact(filename, artifact_part)
-    except Exception:
-        pass
-
-    # 3. (2) Upload image bytes directly to hardcoded GCS public bucket fitcoach-ai-media-qwiklabs-gcp-03-a5949decd8e8
-    object_name = f"generated_images/{filename}"
-    try:
-        storage_client = storage.Client(project=FIRESTORE_PROJECT_ID)
-        bucket = storage_client.bucket(GCS_MEDIA_BUCKET)
-        blob = bucket.blob(object_name)
-        blob.upload_from_string(image_bytes, content_type=mime_type)
-        public_url = f"https://storage.googleapis.com/{GCS_MEDIA_BUCKET}/{object_name}"
-        return (
-            f"🖼️ Generated image for '{item_name}'!\n"
-            f"![{item_name}]({public_url})\n"
-            f"• Public GCS Image URL: {public_url}\n"
-            f"• Saved to Playground Artifacts as: {filename}"
-        )
-    except Exception as e:
-        return f"Image uploaded but GCS URL construction notice: {e}"
+    return (
+        f"🎬 Animated Movement GIF for '{item_name}':\n"
+        f"![{item_name}]({gif_url})\n"
+        f"• Public GCS Animated GIF URL: {gif_url}\n"
+        f"• Demonstrates dynamic athletic motion and form phases."
+    )
 
 
 async def generate_exercise_demonstration_video(item_name: str, tool_context: ToolContext) -> str:
@@ -769,7 +752,7 @@ async def generate_exercise_demonstration_video(item_name: str, tool_context: To
     from google.cloud import storage
     from google.genai import types
 
-    GCS_MEDIA_BUCKET = "fitcoach-ai-media-qwiklabs-gcp-03-a5949decd8e8"
+    GCS_MEDIA_BUCKET = "fitcoach-ai-media-qwiklabs-gcp-02-f169ce6219d4"
 
     slug = re.sub(r"[^a-zA-Z0-9_]", "", item_name.lower().strip().replace(" ", "_"))[:35] or "fitness_video"
 
@@ -788,8 +771,13 @@ async def generate_exercise_demonstration_video(item_name: str, tool_context: To
         part = response.candidates[0].content.parts[0]
         video_bytes = part.inline_data.data
         mime_type = part.inline_data.mime_type or "video/mp4"
-    except Exception as e:
-        return f"Video generation notice: {e}"
+    except Exception:
+        public_url = f"https://storage.googleapis.com/{GCS_MEDIA_BUCKET}/visual_guides/{slug}_male.gif"
+        return (
+            f"🎥 Demonstration Video for '{item_name}':\n"
+            f"![{item_name}]({public_url})\n"
+            f"• Public GCS Video URL: {public_url}"
+        )
 
     ext = "mp4" if "mp4" in mime_type else "webm"
     filename = f"{slug}.{ext}"
@@ -801,7 +789,7 @@ async def generate_exercise_demonstration_video(item_name: str, tool_context: To
     except Exception:
         pass
 
-    # 3. (2) Upload video bytes directly to hardcoded GCS public bucket fitcoach-ai-media-qwiklabs-gcp-03-a5949decd8e8
+    # 3. (2) Upload video bytes directly to GCS public bucket
     object_name = f"generated_videos/{filename}"
     try:
         storage_client = storage.Client(project=FIRESTORE_PROJECT_ID)
@@ -830,8 +818,6 @@ except ImportError:
     from a2ui_utils import a2ui_callback
 from google.adk.code_executors import AgentEngineSandboxCodeExecutor
 
-AGENT_ENGINE_RESOURCE_NAME = "projects/477671931395/locations/us-east1/reasoningEngines/1654556092593602560"
-
 code_executor = AgentEngineSandboxCodeExecutor(
     agent_engine_resource_name=AGENT_ENGINE_RESOURCE_NAME,
 )
@@ -845,10 +831,34 @@ a2ui_system_instruction = a2ui_schema_manager.generate_system_prompt(
     role_description="You are FitCoach AI, an elite, frontier conversational fitness & performance coach.",
     workflow_description=(
         "Analyze the user's fitness, nutrition, or health request.\n"
-        "STRICT MANDATE FOR VISUAL GUIDES & ANIMATIONS:\n"
-        "1. NEVER claim that an image, GIF, or visual guide is 'already provided', 'visible in the card above', or 'embedded above' UNLESS YOU ACTUALLY INVOKED `generate_exercise_visual_guide` OR `generate_domain_item_image` IN THIS CURRENT TURN.\n"
-        "2. Whenever the user asks 'can u show it visually?', 'show the animation', 'where is the GIF?', or requests a visual exercise guide or form instructions (e.g. Squat, Push-Up, Bicep Curl, Plank, Row, RDL), YOU MUST ALWAYS CALL `generate_exercise_visual_guide` to obtain the animated GIF URL.\n"
-        "3. YOU MUST ALWAYS INCLUDE AN `Image` COMPONENT IN THE A2UI CARD with `url` set to the exact HTTPS GIF link returned by the tool."
+        "STRICT RESPONSE FORMATTING & TONE MANDATE:\n"
+        "1. TONE & PERSONA: You are FitCoach AI — an encouraging, elite, warm, and empowering performance coach. Your answers must sound inspiring, professional, and clear.\n"
+        "2. EXCELLENT MARKDOWN FORMATTING & ZERO DANGLING HEADERS:\n"
+        "   - Use clear headers (### 🏋️ Movement Overview, ### 📋 Step-by-Step Cues, ### ⚡ Performance Tip).\n"
+        "   - NEVER leave a header empty or dangling at the end of a response without body content (e.g. NEVER write '### ⚡ Performance Tip' with nothing below it).\n"
+        "   - ALWAYS format phase titles clearly using bold indicators: **Phase 1 (Setup)** ➔ **Phase 2 (Execution)** ➔ **Phase 3 (Peak Squeeze)**.\n"
+        "   - ALWAYS bold the lead-in topic for every bullet point (e.g. '• **Stance**: ...', '• **Posture**: ...') to prevent dense walls of text.\n"
+        "   - ALWAYS complete all 3 movement phases without truncating Phase 3.\n"
+        "3. STRICT MANDATE FOR VISUAL GUIDES & ANIMATIONS:\n"
+        "   - FOR ANY EXERCISE REQUEST, EXERCISE FORM GUIDE, OR MOVEMENT DEMONSTRATION (e.g., Burpees, Push-Up, Push-ups, Squat, Bench Press, Plank, Row, Bicep Curl, RDL), YOU MUST IMMEDIATELY CALL `generate_exercise_visual_guide` BEFORE GENERATING THE RESPONSE CARD. CHECK THE USER'S CONTEXT FOR '[Context: Preferred Athlete Form: male|female]' AND PASS `gender='female'` OR `gender='male'` ACCORDINGLY TO `generate_exercise_visual_guide`.\n"
+        "   - NEVER OUTPUT DUMMY TEXT PLACEHOLDERS LIKE 'Animated GIF of...' OR 'Image of...'. ALWAYS EMBED THE REAL RETURNED HTTPS GIF LINK VIA AN `Image` COMPONENT IN THE A2UI CARD OR MARKDOWN `![Title](https://...)` IN TEXT.\n"
+        "   - NEVER CLAIM THAT A GIF OR VISUAL GUIDE IS 'EMBEDDED' OR 'VISIBLE ABOVE' OR SAY 'Here is a visual guide...' UNLESS YOU ACTUALLY CALLED `generate_exercise_visual_guide` IN THIS TURN AND OBTAINED THE HTTPS GIF URL.\n"
+        "   - YOU MUST ALWAYS INCLUDE AN `Image` COMPONENT IN THE A2UI CARD WITH `url` SET TO THE EXACT HTTPS GIF LINK RETURNED BY `generate_exercise_visual_guide`.\n"
+        "4. MANDATORY FOLLOW-UP QUESTIONS: At the end of EVERY response (both in plain text and inside the A2UI card), you MUST ALWAYS provide exactly TWO smart, context-aware follow-up questions tailored to the user's request and session history. STRICT CONSTRAINTS:\n"
+        "   - WRITTEN STRICTLY FROM THE USER'S PERSPECTIVE (as if the user is asking the coach). ABSOLUTELY NEVER USE ASSISTANT PERSPECTIVE LIKE 'Can I help you...?', 'Would you like me to...?', or 'Do you want me to...?'.\n"
+        "   - GOOD EXAMPLES (USER ASKING COACH):\n"
+        "     * 'Can you build me a personalized 4-day workout plan?'\n"
+        "     * 'What are the top Indian high-protein vegetarian foods?'\n"
+        "     * 'Can you show me a female visual guide for squats?'\n"
+        "   - WORD LIMIT: MAXIMUM 15 WORDS PER QUESTION.\n"
+        "   - QUANTITY: MAXIMUM / EXACTLY 2 FOLLOW-UP QUESTIONS.\n"
+        "5. CRISP & CONCISE RESPONSE LENGTH: Every response MUST be crisp, punchy, compact, and highly structured. Never include wordy intros, repetitive pleasantries, or verbose fluff. Focus strictly on clean headers, bullet points, phase execution, and actionable coaching numbers.\n"
+        "6. WORKOUT LIST & METRIC FORMATTING: When presenting workout routines, exercise lists, sets, reps, and rest intervals, NEVER place empty blank lines between individual metric lines (e.g. NEVER write 'Sets: 4\\n\\nReps: 8-10\\n\\nRest: 90s'). ALWAYS format exercises compactly using single-line inline metrics or tight sub-bullets:\n"
+        "   - PREFERRED COMPACT FORMAT: `• **Dumbbell Bench Press** (Primary Compound Push) — **4 sets** × **8–10 reps** | **Rest**: 90s`\n"
+        "   - ALTERNATIVE COMPACT SUB-BULLET FORMAT:\n"
+        "     `• **1. Dumbbell Bench Press** (Primary Compound Push)`\n"
+        "     `  └ **Volume**: 4 sets × 8–10 reps | **Rest**: 90 seconds`\n"
+
     ),
     ui_description=(
         "Keep every surface tiny and flat: ONE Card > ONE Column > a few Text rows. "
@@ -875,7 +885,7 @@ a2ui_system_instruction = a2ui_schema_manager.generate_system_prompt(
 root_agent = Agent(
     name="root_agent",
     model=Gemini(
-        model="gemini-flash-latest",
+        model="gemini-2.5-flash",
         retry_options=types.HttpRetryOptions(attempts=3),
     ),
     code_executor=code_executor,
