@@ -6,8 +6,8 @@ from pathlib import Path
 from PIL import Image, ImageDraw
 from google.cloud import firestore, storage
 
-BUCKET_NAME = "fitcoach-ai-media-3812"
-PROJECT_ID = "qwiklabs-gcp-03-3812c3284864"
+BUCKET_NAME = "fitcoach-ai-media-qwiklabs-gcp-03-a5949decd8e8"
+PROJECT_ID = "qwiklabs-gcp-03-a5949decd8e8"
 LOCAL_CACHE_FILE = Path("data/firestore_cache.json")
 
 EXERCISES = [
@@ -204,13 +204,13 @@ def render_all_character_gifs():
         male_bytes = create_character_animated_gif(ex_name, target, "male")
         male_blob = bucket.blob(f"visual_guides/{slug}_male.gif")
         male_blob.upload_from_string(male_bytes, content_type="image/gif")
-        male_url = f"https://storage.googleapis.com/fitcoach-ai-media-3812/visual_guides/{slug}_male.gif"
+        male_url = f"https://storage.googleapis.com/{BUCKET_NAME}/visual_guides/{slug}_male.gif"
 
         # Generate Female Animated GIF
         female_bytes = create_character_animated_gif(ex_name, target, "female")
         female_blob = bucket.blob(f"visual_guides/{slug}_female.gif")
         female_blob.upload_from_string(female_bytes, content_type="image/gif")
-        female_url = f"https://storage.googleapis.com/fitcoach-ai-media-3812/visual_guides/{slug}_female.gif"
+        female_url = f"https://storage.googleapis.com/{BUCKET_NAME}/visual_guides/{slug}_female.gif"
 
         doc_data = {
             "exercise_id": slug,

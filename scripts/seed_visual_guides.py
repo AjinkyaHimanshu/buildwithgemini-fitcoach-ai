@@ -5,7 +5,7 @@ from PIL import Image, ImageDraw
 from google.cloud import storage
 
 BUCKET_NAME = "fitcoach-ai-media-3812"
-PROJECT_ID = "qwiklabs-gcp-03-3812c3284864"
+PROJECT_ID = "qwiklabs-gcp-03-a5949decd8e8"
 
 EXERCISES_TO_SEED = [
     ("Plank", "Core & Abdominals"),

@@ -7,7 +7,7 @@ from PIL import Image, ImageDraw
 from google.cloud import firestore, storage
 
 BUCKET_NAME = "fitcoach-ai-media-3812"
-PROJECT_ID = "qwiklabs-gcp-03-3812c3284864"
+PROJECT_ID = "qwiklabs-gcp-03-a5949decd8e8"
 LOCAL_CACHE_FILE = Path("data/firestore_cache.json")
 
 EXERCISES = [

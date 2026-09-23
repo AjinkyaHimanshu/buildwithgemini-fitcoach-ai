@@ -5,7 +5,7 @@ import vertexai
 from vertexai.preview import rag
 from vertexai.preview.rag.utils import resources as rr
 
-PROJECT_ID = "qwiklabs-gcp-03-3812c3284864"
+PROJECT_ID = "qwiklabs-gcp-03-a5949decd8e8"
 LOCATION = "us-central1"
 GCS_PATH = "gs://fitcoach-ai-media-3812/rag/pg49513.txt"
 

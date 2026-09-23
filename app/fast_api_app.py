@@ -74,6 +74,14 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
         task_store=InMemoryTaskStore(),
         rpc_path=f"/a2a/{adk_app.name}",
     )
+    if adk_app.name != "app":
+        await attach_a2a_routes(
+            app,
+            agent=root_agent,
+            runner=runner,
+            task_store=InMemoryTaskStore(),
+            rpc_path="/a2a/app",
+        )
     yield
 
 

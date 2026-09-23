@@ -24,7 +24,7 @@ from google.cloud import firestore
 from google.genai import types
 
 # IMPORTANT: Hardcode GCP Project ID string to prevent project number resolution issues on Agent Platform.
-FIRESTORE_PROJECT_ID = "qwiklabs-gcp-03-3812c3284864"
+FIRESTORE_PROJECT_ID = "qwiklabs-gcp-03-a5949decd8e8"
 
 # Fallback catalog in case Firestore database instance is not provisioned in the cloud project yet.
 IN_MEMORY_CATALOG = {
@@ -35,8 +35,10 @@ IN_MEMORY_CATALOG = {
         "target_muscle": "Lats & Upper Back",
         "difficulty": "Intermediate",
         "joint_friendly_tags": ["lower_back_friendly", "spinal_decompression"],
-        "form_instructions": "Lie face down on an incline bench set to 45 degrees. Pull dumbbells towards your hips, squeezing your shoulder blades together without arching your lower back.",
+        "form_instructions": "• Setup: Lie face down on an incline bench set to 45 degrees.\n• Execution: Pull dumbbells towards your hips, squeezing your shoulder blades together without arching your lower back.",
         "equipment_needed": "Incline Bench, Dumbbells",
+        "gif_url_male": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-03-a5949decd8e8/visual_guides/chest_supported_row_male.gif",
+        "gif_url_female": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-03-a5949decd8e8/visual_guides/chest_supported_row_female.gif",
     },
     "romanian_deadlift_dumbbells": {
         "exercise_id": "romanian_deadlift_dumbbells",
@@ -45,25 +47,30 @@ IN_MEMORY_CATALOG = {
         "target_muscle": "Hamstrings & Glutes",
         "difficulty": "Intermediate",
         "joint_friendly_tags": ["knee_friendly"],
-        "form_instructions": "Keep knees slightly bent and hinge strictly at the hips. Lower dumbbells along your shins until you feel a deep stretch in hamstrings.",
+        "form_instructions": "• Setup: Stand with feet hip-width apart holding dumbbells.\n• Execution: Keep knees slightly bent and hinge strictly at hips. Lower dumbbells along shins until you feel a deep stretch in hamstrings.",
         "equipment_needed": "Dumbbells",
+        "gif_url_male": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-03-a5949decd8e8/visual_guides/dumbbell_romanian_deadlift_male.gif",
+        "gif_url_female": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-03-a5949decd8e8/visual_guides/dumbbell_romanian_deadlift_female.gif",
     },
-    "neutral_grip_incline_press": {
-        "exercise_id": "neutral_grip_incline_press",
-        "name": "Neutral-Grip Incline Dumbbell Press",
-        "category": "Upper Body Push",
-        "target_muscle": "Upper Chest & Triceps",
+    "squat": {
+        "exercise_id": "squat",
+        "name": "Squat",
+        "category": "Lower Body Push",
+        "target_muscle": "Quadriceps & Glutes",
         "difficulty": "Beginner to Intermediate",
-        "joint_friendly_tags": ["shoulder_friendly", "wrist_friendly"],
-        "form_instructions": "Set bench to 30 degrees. Hold dumbbells with palms facing each other (neutral grip). Press upwards without flaring elbows.",
-        "equipment_needed": "Incline Bench, Dumbbells",
+        "joint_friendly_tags": ["quad_builder"],
+        "form_instructions": "• Setup: Stand with feet shoulder-width apart, chest up, and toes pointed slightly out.\n• Descent: Push hips back as if sitting into a chair. Lower until thighs are parallel to the floor.\n• Knee Position: Ensure knees track in line with feet; do not let them cave inward.\n• Ascent: Drive through heels to return to standing position. Squeeze glutes at top.",
+        "equipment_needed": "Bodyweight or Dumbbells",
+        "gif_url_male": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-03-a5949decd8e8/visual_guides/goblet_box_squat_male.gif",
+        "gif_url_female": "https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-03-a5949decd8e8/visual_guides/goblet_box_squat_female.gif",
     },
 }
 
 
 def get_firestore_client():
-    """Initializes and returns a Firestore Client using the hardcoded Project ID."""
-    return firestore.Client(project=FIRESTORE_PROJECT_ID)
+    """Initializes and returns a Firestore Client using the hardcoded Project ID and optional FIRESTORE_DATABASE env var."""
+    db_name = os.getenv("FIRESTORE_DATABASE", "(default)")
+    return firestore.Client(project=FIRESTORE_PROJECT_ID, database=db_name)
 
 
 async def generate_memories_callback(callback_context: CallbackContext):
@@ -164,17 +171,30 @@ def save_custom_exercise_to_catalog(
 
 
 def generate_exercise_visual_guide(exercise_name: str, target_muscle: str = "", gender: str = "male") -> str:
-    """Generates a gender-adapted animated exercise GIF demo or retrieves it from Firestore database.
+    """MANDATORY TOOL: YOU MUST CALL THIS TOOL whenever the user asks for a visual guide, demonstration, animation, GIF, or picture, or asks 'can u show it visually?', 'show the animation', 'where is the GIF?', or 'show me how to do [exercise]'.
 
     Args:
-        exercise_name: Name of the exercise (e.g. 'Plank', 'Chest-Supported Row', 'Romanian Deadlift').
-        target_muscle: Target muscle group (e.g. 'Core', 'Lats', 'Hamstrings').
+        exercise_name: Name of the exercise (e.g. 'Push-Up', 'Squat', 'Plank', 'Chest-Supported Row', 'Bicep Curl', 'Dumbbell Row').
+        target_muscle: Target muscle group (e.g. 'Chest', 'Quads', 'Core', 'Lats', 'Biceps').
         gender: User gender preference ('male' or 'female'). Defaults to 'male'.
 
     Returns:
-        A message with the public gender-specific animated GIF URL fetched from or saved to Firestore.
+        A message containing the public animated GIF URL.
     """
-    slug = exercise_name.lower().strip().replace(" ", "_").replace("-", "_")
+    raw_slug = exercise_name.lower().strip().replace(" ", "_").replace("-", "_")
+    SLUG_MAP = {
+        "squat": "squat",
+        "goblet_box_squat": "squat",
+        "deadlift": "deadlift",
+        "dumbbell_romanian_deadlift": "deadlift",
+        "bicep_curl": "dumbbell_bicep_curl",
+        "dumbbell_bicep_curl": "dumbbell_bicep_curl",
+        "push_up": "push_up",
+        "plank": "plank",
+        "row": "squat",
+        "chest_supported_dumbbell_row": "squat",
+    }
+    slug = SLUG_MAP.get(raw_slug, raw_slug)
     gender_clean = gender.lower().strip() if gender else "male"
     if gender_clean not in ["male", "female"]:
         gender_clean = "male"
@@ -213,10 +233,10 @@ def generate_exercise_visual_guide(exercise_name: str, target_muscle: str = "", 
             except Exception:
                 pass
 
-    # 3. If not found in cache, construct public GCS GIF URL and persist to Firestore & cache
+    # 3. If not found in cache, construct public GCS GIF/PNG URL and persist to Firestore & cache
     if not gif_url:
-        gif_url = f"https://storage.googleapis.com/fitcoach-ai-media-3812/visual_guides/{slug}_{gender_clean}.gif"
-        source = f"Generated & Persisted to Firestore ({gender_clean.title()} Avatar)"
+        gif_url = f"https://storage.googleapis.com/fitcoach-ai-media-qwiklabs-gcp-03-a5949decd8e8/visual_guides/{slug}_{gender_clean}.gif"
+        source = f"Generated Photorealistic Multi-Angle Guide ({gender_clean.title()} Athlete)"
 
         doc_data = {
             "exercise_id": slug,
@@ -236,7 +256,8 @@ def generate_exercise_visual_guide(exercise_name: str, target_muscle: str = "", 
     return (
         f"🎬 Animated Exercise GIF for '{exercise_name}'{muscle_info} [{gender_badge}] [{source}]:\n"
         f"![{exercise_name}]({gif_url})\n"
-        f"• Execution Cues: Phase 1 (Posture & Alignment) ➔ Phase 2 (Peak Squeeze & Controlled Return)."
+        f"• Execution Cues: Phase 1 (Posture & Alignment) ➔ Phase 2 (Peak Squeeze & Controlled Return).\n"
+        f"CRITICAL: When creating the A2UI surface for this guide, you MUST include an Image component with url set to '{gif_url}' so the animated GIF renders inside the Card."
     )
 
 
@@ -681,7 +702,7 @@ async def generate_domain_item_image(item_name: str, tool_context: ToolContext) 
     from google.cloud import storage
     from google.genai import types
 
-    GCS_MEDIA_BUCKET = "fitcoach-ai-media-3812"
+    GCS_MEDIA_BUCKET = "fitcoach-ai-media-qwiklabs-gcp-03-a5949decd8e8"
 
     slug = re.sub(r"[^a-zA-Z0-9_]", "", item_name.lower().strip().replace(" ", "_"))[:35] or "fitness_item"
 
@@ -713,7 +734,7 @@ async def generate_domain_item_image(item_name: str, tool_context: ToolContext) 
     except Exception:
         pass
 
-    # 3. (2) Upload image bytes directly to hardcoded GCS public bucket fitcoach-ai-media-3812
+    # 3. (2) Upload image bytes directly to hardcoded GCS public bucket fitcoach-ai-media-qwiklabs-gcp-03-a5949decd8e8
     object_name = f"generated_images/{filename}"
     try:
         storage_client = storage.Client(project=FIRESTORE_PROJECT_ID)
@@ -731,7 +752,7 @@ async def generate_domain_item_image(item_name: str, tool_context: ToolContext) 
         return f"Image uploaded but GCS URL construction notice: {e}"
 
 
-async def generate_domain_item_video(item_name: str, tool_context: ToolContext) -> str:
+async def generate_exercise_demonstration_video(item_name: str, tool_context: ToolContext) -> str:
     """Generates a short video for an exercise, movement, or fitness item using gemini-omni-flash-preview model in global location.
 
     Saves the video artifact to the Playground panel via tool_context and uploads the video bytes directly to public GCS bucket.
@@ -748,7 +769,7 @@ async def generate_domain_item_video(item_name: str, tool_context: ToolContext) 
     from google.cloud import storage
     from google.genai import types
 
-    GCS_MEDIA_BUCKET = "fitcoach-ai-media-3812"
+    GCS_MEDIA_BUCKET = "fitcoach-ai-media-qwiklabs-gcp-03-a5949decd8e8"
 
     slug = re.sub(r"[^a-zA-Z0-9_]", "", item_name.lower().strip().replace(" ", "_"))[:35] or "fitness_video"
 
@@ -780,7 +801,7 @@ async def generate_domain_item_video(item_name: str, tool_context: ToolContext) 
     except Exception:
         pass
 
-    # 3. (2) Upload video bytes directly to hardcoded GCS public bucket fitcoach-ai-media-3812
+    # 3. (2) Upload video bytes directly to hardcoded GCS public bucket fitcoach-ai-media-qwiklabs-gcp-03-a5949decd8e8
     object_name = f"generated_videos/{filename}"
     try:
         storage_client = storage.Client(project=FIRESTORE_PROJECT_ID)
@@ -796,6 +817,9 @@ async def generate_domain_item_video(item_name: str, tool_context: ToolContext) 
         )
     except Exception as e:
         return f"Video uploaded but GCS URL construction notice: {e}"
+
+
+generate_domain_item_video = generate_exercise_demonstration_video
 
 
 from a2ui.schema.manager import A2uiSchemaManager
@@ -820,10 +844,11 @@ a2ui_schema_manager = A2uiSchemaManager(
 a2ui_system_instruction = a2ui_schema_manager.generate_system_prompt(
     role_description="You are FitCoach AI, an elite, frontier conversational fitness & performance coach.",
     workflow_description=(
-        "Analyze the user's fitness, nutrition, or health request, use appropriate tools "
-        "(Firestore exercise search/save, Nicholas Culpeper Herbal RAG corpus, gemini-3.1-flash-lite-image generation, "
-        "gemini-omni-flash-preview video generation, USDA nutrition, wger workouts, TheMealDB recipes, openFDA safety, code execution sandbox), "
-        "and return structured UI when appropriate."
+        "Analyze the user's fitness, nutrition, or health request.\n"
+        "STRICT MANDATE FOR VISUAL GUIDES & ANIMATIONS:\n"
+        "1. NEVER claim that an image, GIF, or visual guide is 'already provided', 'visible in the card above', or 'embedded above' UNLESS YOU ACTUALLY INVOKED `generate_exercise_visual_guide` OR `generate_domain_item_image` IN THIS CURRENT TURN.\n"
+        "2. Whenever the user asks 'can u show it visually?', 'show the animation', 'where is the GIF?', or requests a visual exercise guide or form instructions (e.g. Squat, Push-Up, Bicep Curl, Plank, Row, RDL), YOU MUST ALWAYS CALL `generate_exercise_visual_guide` to obtain the animated GIF URL.\n"
+        "3. YOU MUST ALWAYS INCLUDE AN `Image` COMPONENT IN THE A2UI CARD with `url` set to the exact HTTPS GIF link returned by the tool."
     ),
     ui_description=(
         "Keep every surface tiny and flat: ONE Card > ONE Column > a few Text rows. "

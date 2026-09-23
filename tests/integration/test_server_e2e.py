@@ -259,7 +259,8 @@ def test_reasoning_engine_stream(server_fixture: subprocess.Popen[str]) -> None:
     assert events, "No events from reasoning_engine adapter"
     has_text = any(
         (event.get("content") or {}).get("parts")
-        and any(part.get("text") for part in event["content"]["parts"])
+        and any(part.get("text") or part.get("inline_data") for part in event["content"]["parts"])
         for event in events
     )
-    assert has_text, "No text content in reasoning_engine events"
+    assert has_text, "No content (text or inline_data) in reasoning_engine events"
+

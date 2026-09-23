@@ -24,7 +24,9 @@ Run:
   python main.py                 # -> http://localhost:8080
 """
 
+import json
 import os
+import re
 import uuid
 
 import google.auth
@@ -51,38 +53,46 @@ try:
 except ImportError:
     pass
 
-RESOURCE = os.environ.get(
-    "AGENT_ENGINE_RESOURCE_NAME",
-    "projects/477671931395/locations/us-east1/reasoningEngines/1654556092593602560",
-)
-# The agent's app directory (matches agent_directory in agents-cli-manifest.yaml).
-AGENT_DIRECTORY = os.environ.get("AGENT_DIRECTORY", "app")
-# Location is embedded in the resource name: projects/<p>/locations/<loc>/reasoningEngines/<id>.
-LOCATION = RESOURCE.split("/locations/")[1].split("/")[0]
+USE_LOCAL_AGENT = os.environ.get("USE_LOCAL_AGENT", "true").lower() in ("true", "1", "yes")
+LOCAL_AGENT_URL = os.environ.get("LOCAL_AGENT_URL", "http://127.0.0.1:8000/a2a/fitcoach-ai")
 
-# A2A endpoint for an Agent Runtime deployment, via the Agent Engine HTTP
-# passthrough. The card lives at the well-known path under this base.
-A2A_BASE = (
-    f"https://{LOCATION}-aiplatform.googleapis.com/reasoningEngines/v1/"
-    f"{RESOURCE}/api/a2a/{AGENT_DIRECTORY}"
-)
+if USE_LOCAL_AGENT:
+    A2A_BASE = LOCAL_AGENT_URL
+else:
+    RESOURCE = os.environ.get(
+        "AGENT_ENGINE_RESOURCE_NAME",
+        "projects/477671931395/locations/us-east1/reasoningEngines/1654556092593602560",
+    )
+    AGENT_DIRECTORY = os.environ.get("AGENT_DIRECTORY", "app")
+    LOCATION = RESOURCE.split("/locations/")[1].split("/")[0]
+    A2A_BASE = (
+        f"https://{LOCATION}-aiplatform.googleapis.com/reasoningEngines/v1/"
+        f"{RESOURCE}/api/a2a/{AGENT_DIRECTORY}"
+    )
+
 A2A_CARD_URL = f"{A2A_BASE}/.well-known/agent-card.json"
 
 # The agent tags its A2UI data parts with this mime type.
 _A2UI_MIME = "application/json+a2ui"
 
-# One set of ADC credentials, refreshed per request (access tokens expire ~1h).
-_creds, _ = google.auth.default(
-    scopes=["https://www.googleapis.com/auth/cloud-platform"]
-)
+try:
+    _creds, _ = google.auth.default(
+        scopes=["https://www.googleapis.com/auth/cloud-platform"]
+    )
+except Exception:
+    _creds = None
 
 
 def _auth_headers() -> dict[str, str]:
-    _creds.refresh(google.auth.transport.requests.Request())
-    return {
-        "Authorization": f"Bearer {_creds.token}",
-        "Content-Type": "application/json",
-    }
+    headers = {"Content-Type": "application/json"}
+    if _creds is not None and not USE_LOCAL_AGENT:
+        try:
+            _creds.refresh(google.auth.transport.requests.Request())
+            headers["Authorization"] = f"Bearer {_creds.token}"
+        except Exception:
+            pass
+    return headers
+
 
 
 app = FastAPI()
@@ -121,29 +131,73 @@ async def _get_card(client: httpx.AsyncClient) -> AgentCard:
     return _card
 
 
+_DATAPART_RE = re.compile(r"<a2a_datapart_json>(.*?)</a2a_datapart_json>", re.DOTALL)
+
+
+def _parse_datapart_json(val) -> dict | None:
+    if isinstance(val, dict):
+        return val.get("data") if isinstance(val.get("data"), dict) else val
+    if isinstance(val, bytes):
+        try:
+            val = val.decode("utf-8")
+        except Exception:
+            return None
+    if not isinstance(val, str):
+        return None
+    match = _DATAPART_RE.search(val)
+    if match:
+        try:
+            parsed = json.loads(match.group(1))
+            if isinstance(parsed, dict) and "data" in parsed:
+                return parsed["data"]
+            elif isinstance(parsed, dict):
+                return parsed
+        except Exception:
+            pass
+    try:
+        parsed = json.loads(val)
+        if isinstance(parsed, dict):
+            return parsed.get("data") if isinstance(parsed.get("data"), dict) else parsed
+    except Exception:
+        pass
+    return None
+
+
 def _extract_parts(parts: list) -> list[dict]:
     """Turn A2A response parts into structured parts for the chat UI.
 
     Text parts pass through as {"kind": "text"}. A2UI data parts (tagged
-    application/json+a2ui) become {"kind": "a2ui", "data": <message>} so the UI
-    renders the card; each data part is one A2UI message (beginRendering or
+    application/json+a2ui or wrapped in <a2a_datapart_json>) become {"kind": "a2ui", "data": <message>}
+    so the UI renders the card; each data part is one A2UI message (beginRendering or
     surfaceUpdate).
     """
     out: list[dict] = []
     for p in parts:
         root = getattr(p, "root", p)
-        if isinstance(root, TextPart) and getattr(root, "text", None):
-            out.append({"kind": "text", "text": root.text})
-        elif getattr(root, "data", None) is not None:
+        data_val = getattr(root, "data", None)
+        text_val = getattr(root, "text", None)
+        a2ui_payload = _parse_datapart_json(data_val) or _parse_datapart_json(text_val)
+
+        if a2ui_payload:
+            out.append({"kind": "a2ui", "data": a2ui_payload})
+        elif isinstance(root, TextPart) and text_val:
+            clean_text = _DATAPART_RE.sub("", text_val).strip()
+            if clean_text:
+                out.append({"kind": "text", "text": clean_text})
+        elif data_val is not None:
+            if isinstance(data_val, dict):
+                a2ui_data = data_val.get("data") if isinstance(data_val.get("data"), dict) else data_val
+                out.append({"kind": "a2ui", "data": a2ui_data})
             meta = getattr(root, "metadata", None) or {}
             mime = meta.get("mimeType") if isinstance(meta, dict) else None
             if mime == _A2UI_MIME:
-                out.append({"kind": "a2ui", "data": root.data})
+                out.append({"kind": "a2ui", "data": data_val})
         elif isinstance(root, FilePart):
             uri = getattr(getattr(root, "file", None), "uri", None)
             if uri:
                 out.append({"kind": "text", "text": uri})
     return out
+
 
 
 @app.post("/chat")

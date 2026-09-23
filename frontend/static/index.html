@@ -45,7 +45,7 @@
   .a2text.a2-h4 { font-size:1rem; font-weight:600; }
   .a2text.a2-caption { font-size:.85rem; color:#666; }
   .a2divider { border:none; border-top:1px solid var(--border); margin:.4rem 0; width:100%; }
-  .a2img { max-width:100%; border-radius:12px; margin:.5rem 0; display:block; box-shadow:0 4px 12px rgba(0,0,0,0.1); }
+  .a2img { width:100%; max-width:100%; min-height:220px; object-fit:cover; border-radius:12px; margin:.6rem 0; display:block; box-shadow:0 4px 12px rgba(0,0,0,0.1); background:#f8fafc; }
   /* Prompt Chips */
   .suggestions-row { display:flex; gap:.5rem; padding:.7rem 1.2rem .4rem; background:#ffffff; justify-content:flex-start; overflow-x:auto; border-top:1px solid #f1f5f9; }
   .chip { padding:.45rem .9rem; font-size:.84rem; border:1px solid var(--border); border-radius:20px; background:#f8fafc; color:#334155; cursor:pointer; font-weight:500; transition:all 0.15s ease-in-out; white-space:nowrap; }
@@ -100,6 +100,9 @@ function boundStr(v) {
   if (v == null) return "";
   if (typeof v === "string") return v;
   if (typeof v.literalString === "string") return v.literalString;
+  if (typeof v.value === "string") return v.value;
+  if (typeof v.url === "string") return v.url;
+  if (typeof v.src === "string") return v.src;
   return "";
 }
 
@@ -142,15 +145,49 @@ function buildNode(id, comps, seen) {
       const hint = String(props.usageHint || "body").toLowerCase();
       if (["h1", "h2", "h3", "h4", "h5", "h6"].includes(hint)) t.classList.add("a2-" + hint);
       else if (hint === "caption") t.classList.add("a2-caption");
-      t.textContent = boundStr(props.text);
+      const str = boundStr(props.text);
+      if (str.includes("![") || str.includes("http://") || str.includes("https://") || str.includes("**")) {
+        t.innerHTML = formatMarkdown(str);
+      } else {
+        t.textContent = str;
+      }
       return t;
     }
     case "Divider":
       return el("hr", "a2divider");
+    case "Video":
     case "Image": {
-      const src = boundStr(props.url || props.src);
-      if (!/^https?:\/\//i.test(src)) return null;   // only allow safe URLs
-      const img = el("img", "a2img"); img.src = src; img.alt = boundStr(props.alt) || ""; return img;
+      let src = boundStr(props.url) || boundStr(props.src) || boundStr(props.imageUrl) || boundStr(props.imageUri) || boundStr(props.uri);
+      if (!src && typeof props === "object") {
+        const findUrl = (obj) => {
+          if (!obj) return "";
+          if (typeof obj === "string" && /^https?:\/\//i.test(obj)) return obj;
+          if (typeof obj === "object") {
+            for (const k in obj) {
+              const res = findUrl(obj[k]);
+              if (res) return res;
+            }
+          }
+          return "";
+        };
+        src = findUrl(props);
+      }
+      if (!src || !/^https?:\/\//i.test(src)) return null;   // only allow safe URLs
+      const isVideo = /\.(mp4|webm)(\?.*)?$/i.test(src);
+      if (isVideo) {
+        const vid = el("video", "a2img");
+        vid.src = src;
+        vid.autoplay = true;
+        vid.loop = true;
+        vid.muted = true;
+        vid.setAttribute("playsinline", "true");
+        vid.controls = true;
+        return vid;
+      }
+      const img = el("img", "a2img"); 
+      img.src = src; 
+      img.alt = boundStr(props.altText) || boundStr(props.alt) || "Exercise Visual Guide"; 
+      return img;
     }
     case "Icon": {
       const s = el("span", "material-symbols-outlined"); s.textContent = iconName(boundStr(props.name) || props.name); return s;
@@ -177,7 +214,19 @@ function renderSurface(messages, container) {
     rootIds = Object.keys(comps).filter(id => !referenced.has(id));
   }
   let drew = false;
-  for (const rid of rootIds) { const node = buildNode(rid, comps, new Set()); if (node) { container.appendChild(node); drew = true; } }
+  const renderedIds = new Set();
+  for (const rid of rootIds) { const node = buildNode(rid, comps, renderedIds); if (node) { container.appendChild(node); drew = true; } }
+
+  // Guarantee: if any Image component in comps was unreferenced, render it into the card container!
+  for (const id in comps) {
+    if (comps[id].Image && !renderedIds.has(id)) {
+      const imgNode = buildNode(id, comps, renderedIds);
+      if (imgNode) {
+        container.appendChild(imgNode);
+        drew = true;
+      }
+    }
+  }
   return drew;
 }
 
@@ -189,6 +238,29 @@ function flattenText(messages) {
     if (su && Array.isArray(su.components)) for (const c of su.components) if (c && c.component && c.component.Text) out.push(boundStr(c.component.Text.text));
   }
   return out.join("\n").trim();
+}
+
+function renderTableHtml(rows) {
+  let html = '<div style="overflow-x:auto; margin:0.8rem 0;"><table style="width:100%; border-collapse:collapse; font-size:0.92rem; background:#fff; border-radius:10px; overflow:hidden; border:1px solid #e2e8f0; box-shadow:0 1px 3px rgba(0,0,0,0.05);">';
+  let isHeader = true;
+  for (let i = 0; i < rows.length; i++) {
+    const cells = rows[i].slice(1, -1).split('|').map(c => c.trim());
+    if (cells.every(c => /^:?-+:?$/.test(c))) {
+      continue;
+    }
+    if (isHeader) {
+      isHeader = false;
+      html += '<thead style="background:#f1f5f9; color:#0f172a; font-weight:600; text-align:left;"><tr>';
+      cells.forEach(c => { html += `<th style="padding:0.65rem 0.85rem; border-bottom:2px solid #cbd5e1;">${c}</th>`; });
+      html += '</tr></thead><tbody>';
+    } else {
+      html += '<tr style="border-bottom:1px solid #f1f5f9;">';
+      cells.forEach(c => { html += `<td style="padding:0.6rem 0.85rem;">${c}</td>`; });
+      html += '</tr>';
+    }
+  }
+  html += '</tbody></table></div>';
+  return html;
 }
 
 function formatMarkdown(text) {
@@ -220,6 +292,36 @@ function formatMarkdown(text) {
     return id;
   });
 
+  // 2b. Extract markdown tables before escaping
+  const tablePlaceholders = [];
+  const lines = processed.split('\n');
+  let inTable = false;
+  let tableRows = [];
+  let newLines = [];
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i].trim();
+    if (/^\|.*\|$/.test(line)) {
+      inTable = true;
+      tableRows.push(line);
+    } else {
+      if (inTable) {
+        inTable = false;
+        const placeholderId = `__TABLE_PLACEHOLDER_${tablePlaceholders.length}__`;
+        tablePlaceholders.push(renderTableHtml(tableRows));
+        tableRows = [];
+        newLines.push(placeholderId);
+      }
+      newLines.push(lines[i]);
+    }
+  }
+  if (inTable) {
+    const placeholderId = `__TABLE_PLACEHOLDER_${tablePlaceholders.length}__`;
+    tablePlaceholders.push(renderTableHtml(tableRows));
+    newLines.push(placeholderId);
+  }
+  processed = newLines.join('\n');
+
   // 3. Escape HTML entities for safety
   let safe = processed
     .replace(/&/g, "&amp;")
@@ -239,9 +341,12 @@ function formatMarkdown(text) {
   safe = safe.replace(/\n\n/g, '<div style="margin-bottom:.5rem;"></div>');
   safe = safe.replace(/\n/g, '<br>');
 
-  // 5. Restore rendered HTML media elements
+  // 5. Restore rendered HTML media and table elements
   mediaPlaceholders.forEach((mediaHtml, idx) => {
     safe = safe.replace(`__MEDIA_PLACEHOLDER_${idx}__`, mediaHtml);
+  });
+  tablePlaceholders.forEach((tblHtml, idx) => {
+    safe = safe.replace(`__TABLE_PLACEHOLDER_${idx}__`, tblHtml);
   });
 
   return safe;
@@ -249,8 +354,36 @@ function formatMarkdown(text) {
 
 function renderReply(b, parts) {
   b.textContent = "";   // clear the "…" placeholder
-  const texts = parts.filter(p => p && (p.kind === "text" || (!p.kind && p.text))).map(p => p.text || "");
-  const a2ui = parts.filter(p => p && p.kind === "a2ui" && p.data).map(p => p.data);
+  
+  const processedParts = [];
+  (parts || []).forEach(p => {
+    let txt = p ? (p.text || (p.kind === "text" ? p.text : "")) : "";
+    if (txt && txt.includes("<a2a_datapart_json>")) {
+      const match = txt.match(/<a2a_datapart_json>([\s\S]*?)<\/a2a_datapart_json>/);
+      if (match) {
+        try {
+          const parsed = JSON.parse(match[1]);
+          const a2uiData = parsed.data || parsed;
+          processedParts.push({ kind: "a2ui", data: a2uiData });
+          const cleanText = txt.replace(/<a2a_datapart_json>[\s\S]*?<\/a2a_datapart_json>/, "").trim();
+          if (cleanText) processedParts.push({ kind: "text", text: cleanText });
+          return;
+        } catch(e) {}
+      }
+    }
+    if (txt && (txt.includes("<a2ui-json>") || txt.includes("<surfaceUpdate"))) {
+      const cleanText = txt
+        .replace(/<a2ui-json>[\s\S]*?<\/a2ui-json>/g, "")
+        .replace(/<surfaceUpdate[\s\S]*?<\/surfaceUpdate>/g, "")
+        .trim();
+      if (cleanText) processedParts.push({ kind: "text", text: cleanText });
+      return;
+    }
+    processedParts.push(p);
+  });
+
+  const texts = processedParts.filter(p => p && (p.kind === "text" || (!p.kind && p.text))).map(p => p.text || "");
+  const a2ui = processedParts.filter(p => p && p.kind === "a2ui" && p.data).map(p => p.data);
 
   const textStr = texts.join("\n").trim();
   if (textStr) {
